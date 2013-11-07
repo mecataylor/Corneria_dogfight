@@ -33,8 +33,8 @@ function controlAlierons(){
     var throttlePercent = ((rigidbody.velocity.magnitude * 1.0) / maxThrottle);
     
     // alieron rotation
-    if ( Mathf.Abs( Input.GetAxis ( "RightJoystickX" ) ) > 0.15 ) {
-        rigidbody.AddRelativeTorque( Vector3.forward * -1 * Input.GetAxis ( "RightJoystickX" ) * alieronSensitivity * throttlePercent );
+    if ( Mathf.Abs( Input.GetAxis ( "LeftJoystickX" ) ) > 0.15 ) {
+        rigidbody.AddRelativeTorque( Vector3.forward * -1 * Input.GetAxis ( "LeftJoystickX" ) * alieronSensitivity * throttlePercent );
     }
     else {
         rigidbody.angularVelocity = Vector3.Lerp(rigidbody.angularVelocity, Vector3.zero, Time.deltaTime * selfRightingSpeed);
@@ -43,8 +43,8 @@ function controlAlierons(){
 
 function controlElevators(){
     // elevator rotation
-    if ( Mathf.Abs( Input.GetAxis ( "RightJoystickY" ) ) > 0.15 ) {
-        rigidbody.AddRelativeTorque( Vector3.left * Input.GetAxis ( "RightJoystickY" ) * elevatorSensitivity );
+    if ( Mathf.Abs( Input.GetAxis ( "LeftJoystickY" ) ) > 0.15 ) {
+        rigidbody.AddRelativeTorque( Vector3.left * Input.GetAxis ( "LeftJoystickY" ) * elevatorSensitivity );
     }
     else {
         rigidbody.angularVelocity = Vector3.Lerp(rigidbody.angularVelocity, Vector3.zero, Time.deltaTime * tailResponsivness);
@@ -53,8 +53,8 @@ function controlElevators(){
 
 function controlRudder(){
 	// elevator rotation
-    if ( Mathf.Abs( Input.GetAxis ( "LeftJoystickX" ) ) > 0.15 ) {
-        rigidbody.AddRelativeTorque( Vector3.up * Input.GetAxis ( "LeftJoystickX" ) * rudderSensitivity );
+    if ( Mathf.Abs( Input.GetAxis ( "RightJoystickX" ) ) > 0.15 ) {
+        rigidbody.AddRelativeTorque( Vector3.up * Input.GetAxis ( "RightJoystickX" ) * rudderSensitivity );
     }
     else {
         rigidbody.angularVelocity = Vector3.Lerp(rigidbody.angularVelocity, Vector3.zero, Time.deltaTime * tailResponsivness);
