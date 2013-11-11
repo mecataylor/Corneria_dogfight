@@ -11,8 +11,7 @@ public class PlayerFire : MonoBehaviour
 	{
 		if(Input.GetButtonDown("Fire1"))
 		{
-			Vector3 shootVector = transform.position + new Vector3(1f, 0f, 1f);
-			Rigidbody newLaser = Instantiate(bullet, shootVector, transform.rotation) as Rigidbody;
+			Rigidbody newLaser = Instantiate(bullet, transform.position, transform.rotation) as Rigidbody;
 			newLaser.AddForce(transform.forward*velocity,ForceMode.VelocityChange);
 		}
 		
