@@ -28,7 +28,7 @@ public class RandomMatchmaker : MonoBehaviour {
 		}
 		int r = Random.Range(0, count);
 		GameObject plane = PhotonNetwork.Instantiate("Player", respawnLocations[r].transform.position, Quaternion.identity, 0);
-		MonoBehaviour planeControls = (plane.GetComponent("flightForces") as MonoBehaviour);
+		MonoBehaviour planeControls = (plane.GetComponent("ShipBehavior") as MonoBehaviour);
 		planeControls.enabled = true;
 		MonoBehaviour boundries = (plane.GetComponent("KeepInBounds") as MonoBehaviour);
 		boundries.enabled = true;
