@@ -12,6 +12,7 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			transform.position = Vector3.Lerp (transform.position, this.correctPlayerPos, Time.deltaTime * 5);
 			transform.rotation = Quaternion.Lerp (transform.rotation, this.correctPlayerRot, Time.deltaTime * 5);
 			if(isShooting){
+				Debug.Log ("Fire photon torpedos!");
 				transform.SendMessage("startShooting");
 			}else{
 				transform.SendMessage("stopShooting");
@@ -31,7 +32,7 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			this.correctPlayerPos = (Vector3) stream.ReceiveNext();
 			this.correctPlayerRot = (Quaternion) stream.ReceiveNext();
 			isShooting = (bool) stream.ReceiveNext();
-			Debug.Log(this.isShooting);
+			Debug.Log(isShooting);
 		}
 	}
 }
