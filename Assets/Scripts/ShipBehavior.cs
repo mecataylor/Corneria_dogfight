@@ -40,7 +40,6 @@ public class ShipBehavior : MonoBehaviour {
 		}
 		//shootOverride is used for network players
 		if(shootOverride){
-			Debug.Log("Roger, shooting lazer");
 			shootTheLazer();
 		}
 	}
