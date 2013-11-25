@@ -4,8 +4,10 @@ using System.Collections;
 public class ShipBehavior : MonoBehaviour {
 	
 	private GameObject shield;
+	private bool shootOverride;
 	
 	public Rigidbody bullet;
+	public static bool isShooting;
 	public float laser_velocity = 125.0f;
 		
 	public int throttle = 60;
@@ -18,6 +20,7 @@ public class ShipBehavior : MonoBehaviour {
 
 	void Start () {
 		shield = transform.Find("shield").gameObject;
+		shootOverride = false;
 	}
 	
 	void Update () {
@@ -30,10 +33,30 @@ public class ShipBehavior : MonoBehaviour {
 	void fire(){
 		if(Input.GetButtonDown("Fire1"))
 		{
-			float velocity = laser_velocity + throttle;
-			Rigidbody newLaser = Instantiate(bullet, transform.position, transform.rotation) as Rigidbody;
-			newLaser.AddForce(transform.forward * velocity,ForceMode.VelocityChange);
-		}		
+			isShooting = true;
+			shootTheLazer();
+		}else{
+			isShooting = false;	
+		}
+		//shootOverride is used for network players
+		if(shootOverride){
+			shootTheLazer();
+			shootOverride = false;
+		}
+	}
+	
+	void startShooting(){
+		shootOverride = true;
+	}
+	
+	void stopShooting(){
+		shootOverride = false;
+	}
+	
+	void shootTheLazer(){
+		float velocity = laser_velocity + throttle;
+		Rigidbody newLaser = Instantiate(bullet, transform.position, transform.rotation) as Rigidbody;
+		newLaser.AddForce(transform.forward * velocity,ForceMode.VelocityChange);		
 	}
 	
 	void shieldsUp(){
