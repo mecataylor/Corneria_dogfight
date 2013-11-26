@@ -7,6 +7,7 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 	private Quaternion correctPlayerRot;
 	private Vector3 correctPlayerVel;
 	private bool isShooting;
+	private bool shieldUp;
 	
 	void Update(){
 		if (!photonView.isMine){
@@ -14,9 +15,12 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			transform.rotation = Quaternion.Lerp (transform.rotation, correctPlayerRot, Time.deltaTime * 5);
 			rigidbody.velocity = correctPlayerVel;
 			if(isShooting){
-				transform.SendMessage("startShooting");
+				transform.SendMessage("netShoot");
 			}else{
-				transform.SendMessage("stopShooting");
+				transform.SendMessage("netStopShoot");
+			}
+			if(shieldUp){
+				gameObject.SendMessage("netShieldUp");
 			}
 		}
 	}
@@ -28,6 +32,7 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			stream.SendNext (transform.rotation);
 			stream.SendNext (rigidbody.velocity);
 			stream.SendNext (ShipBehavior.isShooting);
+			stream.SendNext (ShipBehavior.shieldOn);
 		}
 		else{
 			//Network Player, receive data
@@ -35,6 +40,7 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			correctPlayerRot = (Quaternion) stream.ReceiveNext();
 			correctPlayerVel = (Vector3) stream.ReceiveNext();
 			isShooting = (bool) stream.ReceiveNext();
+			shieldUp = (bool) stream.ReceiveNext();
 		}
 	}
 }

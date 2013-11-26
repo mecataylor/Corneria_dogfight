@@ -8,6 +8,7 @@ public class ShipBehavior : MonoBehaviour {
 	
 	public Rigidbody bullet;
 	public static bool isShooting;
+	public static bool shieldOn;
 	public float laser_velocity = 125.0f;
 		
 	public int throttle = 60;
@@ -25,7 +26,10 @@ public class ShipBehavior : MonoBehaviour {
 	
 	void Update () {
 		fire ();
-		shieldsUp();
+		if(Input.GetButtonDown("Jump")){
+			shieldOn = true;
+			shieldsUp();
+		}
 		fly();
 	}
 	
@@ -44,11 +48,11 @@ public class ShipBehavior : MonoBehaviour {
 		}
 	}
 	
-	void startShooting(){
+	void netShoot(){
 		shootOverride = true;
 	}
 	
-	void stopShooting(){
+	void netStopShoot(){
 		shootOverride = false;
 	}
 	
@@ -57,11 +61,14 @@ public class ShipBehavior : MonoBehaviour {
 		Rigidbody newLaser = Instantiate(bullet, transform.position, transform.rotation) as Rigidbody;
 		newLaser.AddForce(transform.forward * velocity,ForceMode.VelocityChange);		
 	}
+
+	void netShieldUp(){
+		shieldsUp();
+	}
 	
 	void shieldsUp(){
-		if(Input.GetButtonDown("Jump")){
-			shield.SetActive(true);	
-		}		
+		shield.SetActive(true);
+		shieldOn = false;
 	}
 	
 	void fly() {
