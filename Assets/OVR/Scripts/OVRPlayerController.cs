@@ -55,6 +55,7 @@ public class OVRPlayerController : OVRComponent
 	private Quaternion OrientationOffset = Quaternion.identity;			
 	// Rotation amount from inputs (passed down into CameraController)
 	private float 	YRotation 	 = 0.0f;
+	private float	XRotation	 = 0.0f;
 	
 	// Transfom used to point player in a given direction; 
 	// We should attach objects to this if we want them to rotate 
@@ -362,6 +363,7 @@ public class OVRPlayerController : OVRComponent
 		OrientationOffset = transform.rotation;
 		// Make sure to set y rotation to 0 degrees
 		YRotation = 0.0f;
+		XRotation = 0.0f;
 	}
 	
 	// SetCameras
@@ -373,6 +375,7 @@ public class OVRPlayerController : OVRComponent
 			// to match the game player direction
 			CameraController.SetOrientationOffset(OrientationOffset);
 			CameraController.SetYRotation(YRotation);
+			CameraController.SetXRotation(XRotation);
 		}
 	}
 	
