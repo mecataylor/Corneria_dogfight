@@ -5,11 +5,14 @@ public class ShipBehavior : MonoBehaviour {
 	
 	private GameObject shield;
 	private bool shootOverride;
-	
-	public Rigidbody bullet;
+	private bool boosting;
+
 	public static bool isShooting;
 	public static bool shieldOn;
+
+	public Rigidbody bullet;
 	public float laser_velocity = 125.0f;
+	public Transform[] cannons;
 		
 	public int throttle = 60;
 	public int boost = 10;
@@ -25,12 +28,13 @@ public class ShipBehavior : MonoBehaviour {
 	}
 	
 	void Update () {
-		fire ();
 		if(Input.GetButtonDown("Jump")){
 			shieldOn = true;
 			shieldsUp();
 		}
+		boostOn();
 		fly();
+		fire();
 	}
 	
 	//fire when ready
@@ -57,9 +61,15 @@ public class ShipBehavior : MonoBehaviour {
 	}
 	
 	void shootTheLazer(){
-		float velocity = laser_velocity + throttle;
-		Rigidbody newLaser = Instantiate(bullet, transform.position, transform.rotation) as Rigidbody;
-		newLaser.AddForce(transform.forward * velocity,ForceMode.VelocityChange);		
+		float velocityAdder = throttle;
+		if(boosting){
+			velocityAdder = throttle * boost;
+		}
+		float velocity = laser_velocity + velocityAdder;
+		foreach(Transform cannon in cannons){
+			Rigidbody newLaser = Instantiate(bullet, cannon.position, transform.rotation) as Rigidbody;
+			newLaser.AddForce(transform.forward * velocity, ForceMode.VelocityChange);		
+		}
 	}
 
 	void netShieldUp(){
@@ -70,16 +80,31 @@ public class ShipBehavior : MonoBehaviour {
 		shield.SetActive(true);
 		shieldOn = false;
 	}
+
+	void boostOn(){
+		if(forwardInput() < -.001){
+			boosting = true;
+		}else{
+			boosting = false;
+		}
+	}
+
+	float forwardInput(){
+		return Input.GetAxis("Triggers");
+	}
 	
 	void fly() {
-		
-		float forwardInput = Input.GetAxis("Triggers");
+
+		float currentX = transform.rotation.x;
+		float currentY = transform.rotation.y;
+		float currentZ = transform.rotation.z;
+
 		float pitchInput = Input.GetAxis("LeftJoystickY");
 		float rollInput = Input.GetAxis("RightJoystickX");
 		float yawInput = Input.GetAxis("LeftJoystickX");
 		
-		if(forwardInput < -.001){
-			rigidbody.velocity = transform.forward * throttle * (boost * -forwardInput);
+		if(boosting){
+			rigidbody.velocity = transform.forward * throttle * (boost * -forwardInput());
 		}else{
 			rigidbody.velocity = transform.forward * throttle;
 		}
@@ -89,21 +114,28 @@ public class ShipBehavior : MonoBehaviour {
 		float pitch = Time.deltaTime * throttle * pitchInput * pitchSensitivity;
 
 		//slight roll as you yaw
-		float xRoll = 0;
-		if(Mathf.Abs(yaw) > 0.05){
-			xRoll = Mathf.Sign(yaw) * -rotateOnYaw;
-			// This one might work for the railed version
-			//transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(transform.rotation.x, yaw, rotateOnYaw), Time.deltaTime * 1.5f);
+//		float xRoll = 0;
+//		if(Mathf.Abs(yaw) > 0.05){
+//			xRoll = Mathf.Sign(yaw) * -rotateOnYaw;
+//			// This one might work for the railed version
+//			//transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(transform.rotation.x, yaw, rotateOnYaw), Time.deltaTime * 1.5f);
+//		}
+		
+//		transform.Rotate(currentX, yaw, currentZ);
+//		transform.Rotate(-pitch, currentY, currentZ);
+//		transform.Rotate(currentX, currentY, -roll);
+		transform.Rotate(-pitch, yaw, -roll);
+
+		//if you're not doing anything it will self-right
+		if(pitchInput + rollInput + yawInput == 0){
+			selfRighting();
 		}
-		
-		transform.Rotate(0, yaw, xRoll);
-		transform.Rotate(-pitch, 0, 0);
-		transform.Rotate(0, 0, -roll);
-		
-		selfRighting();
 	}
 	
 	void selfRighting(){
-		transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.identity, Time.deltaTime * selfRightingSpeed);
+		Vector3 flatFwd = new Vector3(transform.forward.x, 0, transform.forward.z);
+		Quaternion fwdRotation = Quaternion.LookRotation(flatFwd, Vector3.up);
+		transform.rotation = Quaternion.Slerp(transform.rotation, fwdRotation, Time.deltaTime * selfRightingSpeed );
 	}
+
 }
