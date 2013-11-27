@@ -39,7 +39,7 @@ public class OVRCameraController : OVRComponent
 	private Quaternion OrientationOffset = Quaternion.identity;	
 	// Set Y rotation here; this will offset the y rotation of the cameras. 
 	private float   YRotation = 0.0f;
-	private float	XRotation = 0.0f;
+	private float	XRotation = 0.0f; //Cameron's Hack
 	
 	// PUBLIC MEMBERS
 	
@@ -219,6 +219,11 @@ public class OVRCameraController : OVRComponent
 		
 		// Handle positioning of eye height and other things here
 		UpdatePlayerEyeHeight();
+
+		// Far Clip Planes Hack
+		// Cameron
+		CameraLeft.farClipPlane = FarClipPlane;
+		CameraRight.farClipPlane = FarClipPlane;
 		
 		// Handle all other camera updates here
 		if(UpdateCamerasDirtyFlag == false)

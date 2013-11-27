@@ -113,21 +113,10 @@ public class ShipBehavior : MonoBehaviour {
 		float roll = Time.deltaTime * throttle * rollInput * rollSensitivity;
 		float pitch = Time.deltaTime * throttle * pitchInput * pitchSensitivity;
 
-		//slight roll as you yaw
-//		float xRoll = 0;
-//		if(Mathf.Abs(yaw) > 0.05){
-//			xRoll = Mathf.Sign(yaw) * -rotateOnYaw;
-//			// This one might work for the railed version
-//			//transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(transform.rotation.x, yaw, rotateOnYaw), Time.deltaTime * 1.5f);
-//		}
-		
-//		transform.Rotate(currentX, yaw, currentZ);
-//		transform.Rotate(-pitch, currentY, currentZ);
-//		transform.Rotate(currentX, currentY, -roll);
 		transform.Rotate(-pitch, yaw, -roll);
 
-		//if you're not doing anything it will self-right
-		if(pitchInput + rollInput + yawInput == 0){
+		//if you're not rolling it will self-right
+		if(rollInput == 0){
 			selfRighting();
 		}
 	}
