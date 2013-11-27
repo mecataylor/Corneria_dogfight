@@ -7,9 +7,6 @@ public class ShipBehavior : MonoBehaviour {
 	private bool shootOverride;
 	private bool boosting;
 
-	public static bool isShooting;
-	public static bool shieldOn;
-
 	public Rigidbody bullet;
 	public float laser_velocity = 125.0f;
 	public Transform[] cannons;
@@ -29,7 +26,7 @@ public class ShipBehavior : MonoBehaviour {
 	
 	void Update () {
 		if(Input.GetButtonDown("Jump")){
-			shieldOn = true;
+			transform.SendMessage("NetworkShield");
 			shieldsUp();
 		}
 		boostOn();
@@ -41,11 +38,10 @@ public class ShipBehavior : MonoBehaviour {
 	void fire(){
 		if(Input.GetButtonDown("Fire1"))
 		{
-			isShooting = true;
 			shootTheLazer();
-		}else{
-			isShooting = false;	
+			transform.SendMessage("NetworkShoot");
 		}
+
 		//shootOverride is used for network players
 		if(shootOverride){
 			shootTheLazer();
@@ -78,7 +74,6 @@ public class ShipBehavior : MonoBehaviour {
 	
 	void shieldsUp(){
 		shield.SetActive(true);
-		shieldOn = false;
 	}
 
 	void boostOn(){
@@ -125,6 +120,22 @@ public class ShipBehavior : MonoBehaviour {
 		Vector3 flatFwd = new Vector3(transform.forward.x, 0, transform.forward.z);
 		Quaternion fwdRotation = Quaternion.LookRotation(flatFwd, Vector3.up);
 		transform.rotation = Quaternion.Slerp(transform.rotation, fwdRotation, Time.deltaTime * selfRightingSpeed );
+	}
+
+	void netDied(){
+		//death sequence
+	}
+
+	void healed(){
+
+	}
+
+	void damaged(){
+
+	}
+
+	void dead(){
+
 	}
 
 }

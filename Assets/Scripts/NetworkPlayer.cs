@@ -6,8 +6,9 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 	private Vector3 correctPlayerPos;
 	private Quaternion correctPlayerRot;
 	private Vector3 correctPlayerVel;
-	private bool isShooting;
-	private bool shieldUp;
+	private bool isShooting = false;
+	private bool shieldUp = false;
+	private bool died = false;
 	
 	void Update(){
 		if (!photonView.isMine){
@@ -22,6 +23,9 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			if(shieldUp){
 				gameObject.SendMessage("netShieldUp");
 			}
+			if(died){
+				transform.SendMessage("netDied");
+			}
 		}
 	}
 	
@@ -31,8 +35,12 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			stream.SendNext (transform.position);
 			stream.SendNext (transform.rotation);
 			stream.SendNext (rigidbody.velocity);
-			stream.SendNext (ShipBehavior.isShooting);
-			stream.SendNext (ShipBehavior.shieldOn);
+			stream.SendNext (isShooting);
+			stream.SendNext (shieldUp);
+			stream.SendNext (died);
+			isShooting = false;
+			shieldUp = false;
+			died = false;
 		}
 		else{
 			//Network Player, receive data
@@ -41,6 +49,19 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			correctPlayerVel = (Vector3) stream.ReceiveNext();
 			isShooting = (bool) stream.ReceiveNext();
 			shieldUp = (bool) stream.ReceiveNext();
+			died = (bool) stream.ReceiveNext();
 		}
+	}
+
+	public void NetworkShoot(){
+		isShooting = true;
+	}
+
+	public void NetworkShield(){
+		shieldUp = true;
+	}
+
+	public void dead(){
+		died = true;
 	}
 }

@@ -22,10 +22,7 @@ public class RandomMatchmaker : MonoBehaviour {
 	
 	void OnJoinedRoom(){
 		GameObject[] respawnLocations = GameObject.FindGameObjectsWithTag("Respawn");
-		int count = 0;
-		foreach ( GameObject item in respawnLocations){
-			count++;
-		}
+		int count = respawnLocations.Length;
 		int r = Random.Range(0, count);
 		GameObject plane = PhotonNetwork.Instantiate("Player", respawnLocations[r].transform.position, Quaternion.identity, 0);
 		MonoBehaviour planeControls = (plane.GetComponent("ShipBehavior") as MonoBehaviour);
