@@ -9,11 +9,13 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 	private bool isShooting = false;
 	private bool shieldUp = false;
 	private bool died = false;
+	private bool gotAHit = false;
+	private int hitID = -1;
 	
 	void Update(){
 		if (!photonView.isMine){
-			transform.position = Vector3.Lerp (transform.position, this.correctPlayerPos, Time.deltaTime * 5);
-			transform.rotation = Quaternion.Lerp (transform.rotation, this.correctPlayerRot, Time.deltaTime * 5);
+			transform.position = Vector3.Lerp (transform.position, correctPlayerPos, Time.deltaTime * 5);
+			transform.rotation = Quaternion.Lerp (transform.rotation, correctPlayerRot, Time.deltaTime * 5);
 			rigidbody.velocity = correctPlayerVel;
 			if(isShooting){
 				transform.SendMessage("netShoot");
@@ -26,6 +28,9 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			if(died){
 				transform.SendMessage("netDied");
 			}
+			if(gotAHit && hitID == photonView.viewID){
+				transform.SendMessage("damage", 1);
+			}
 		}
 	}
 	
@@ -37,10 +42,11 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			stream.SendNext (rigidbody.velocity);
 			stream.SendNext (isShooting);
 			stream.SendNext (shieldUp);
+			stream.SendNext (gotAHit);
+			stream.SendNext (hitID);
 			stream.SendNext (died);
-			isShooting = false;
-			shieldUp = false;
-			died = false;
+			//now reset all the sent variables
+			resetVars();
 		}
 		else{
 			//Network Player, receive data
@@ -50,7 +56,17 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			isShooting = (bool) stream.ReceiveNext();
 			shieldUp = (bool) stream.ReceiveNext();
 			died = (bool) stream.ReceiveNext();
+			gotAHit = (bool) stream.ReceiveNext();
+			hitID = (int) stream.ReceiveNext();
 		}
+	}
+
+	public void resetVars(){
+		isShooting = false;
+		shieldUp = false;
+		gotAHit = false;
+		hitID = -1;
+		died = false;
 	}
 
 	public void NetworkShoot(){
@@ -63,5 +79,10 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 
 	public void dead(){
 		died = true;
+	}
+
+	public void NetworkHit(int playerID){
+		hitID = playerID;
+		gotAHit = true;
 	}
 }

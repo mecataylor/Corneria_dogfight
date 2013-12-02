@@ -90,10 +90,6 @@ public class ShipBehavior : MonoBehaviour {
 	
 	void fly() {
 
-		float currentX = transform.rotation.x;
-		float currentY = transform.rotation.y;
-		float currentZ = transform.rotation.z;
-
 		float pitchInput = Input.GetAxis("LeftJoystickY");
 		float rollInput = Input.GetAxis("RightJoystickX");
 		float yawInput = Input.GetAxis("LeftJoystickX");

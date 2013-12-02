@@ -29,8 +29,12 @@ public class RandomMatchmaker : MonoBehaviour {
 		planeControls.enabled = true;
 		MonoBehaviour boundries = (plane.GetComponent("KeepInBounds") as MonoBehaviour);
 		boundries.enabled = true;
-		//Transform cameraTransform = plane.transform.FindChild("Main Camera");
-		Transform cameraTransform = plane.transform.FindChild("OVRCameraController");
+
+		//decide which camera
+		Transform cameraTransform = plane.transform.FindChild("Main Camera");
+		if(OVRDevice.IsHMDPresent()){
+			cameraTransform = plane.transform.FindChild("OVRCameraController");
+		}
 		GameObject mainCamera = cameraTransform.gameObject;
 		mainCamera.SetActive(true);
 	}
