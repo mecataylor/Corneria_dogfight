@@ -55,9 +55,9 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			correctPlayerVel = (Vector3) stream.ReceiveNext();
 			isShooting = (bool) stream.ReceiveNext();
 			shieldUp = (bool) stream.ReceiveNext();
-			died = (bool) stream.ReceiveNext();
 			gotAHit = (bool) stream.ReceiveNext();
 			hitID = (int) stream.ReceiveNext();
+			died = (bool) stream.ReceiveNext();
 		}
 	}
 

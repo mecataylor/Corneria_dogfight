@@ -7,6 +7,9 @@ public class ShipBehavior : MonoBehaviour {
 	private bool shootOverride;
 	private bool boosting;
 
+	private string boostAxis = "Triggers";
+	private string rollAxis = "RightJoystickX";
+
 	public Rigidbody bullet;
 	public float laser_velocity = 125.0f;
 	public Transform[] cannons;
@@ -22,6 +25,12 @@ public class ShipBehavior : MonoBehaviour {
 	void Start () {
 		shield = transform.Find("shield").gameObject;
 		shootOverride = false;
+
+		//check for OSX for controls
+		if(Application.platform == RuntimePlatform.OSXPlayer){
+			boostAxis = "MACTriggers";
+			rollAxis = "Triggers";
+		}
 	}
 	
 	void Update () {
@@ -85,13 +94,13 @@ public class ShipBehavior : MonoBehaviour {
 	}
 
 	float forwardInput(){
-		return Input.GetAxis("Triggers");
+		return Input.GetAxis(boostAxis);
 	}
 	
 	void fly() {
 
 		float pitchInput = Input.GetAxis("LeftJoystickY");
-		float rollInput = Input.GetAxis("RightJoystickX");
+		float rollInput = Input.GetAxis(rollAxis);
 		float yawInput = Input.GetAxis("LeftJoystickX");
 		
 		if(boosting){
