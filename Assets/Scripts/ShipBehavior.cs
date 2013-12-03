@@ -27,7 +27,7 @@ public class ShipBehavior : MonoBehaviour {
 		shootOverride = false;
 
 		//check for OSX for controls
-		if(Application.platform == RuntimePlatform.OSXPlayer){
+		if(Env.OnAMac()){
 			boostAxis = "MACTriggers";
 			rollAxis = "Triggers";
 		}
