@@ -4,8 +4,8 @@ using System.Collections;
 public class ShipBehavior : MonoBehaviour {
 	
 	private GameObject shield;
-	private bool shootOverride;
 	private bool boosting;
+	private int phViewID;
 
 	private string boostAxis = "Triggers";
 	private string rollAxis = "RightJoystickX";
@@ -24,7 +24,6 @@ public class ShipBehavior : MonoBehaviour {
 
 	void Start () {
 		shield = transform.Find("shield").gameObject;
-		shootOverride = false;
 
 		//check for OSX for controls
 		if(Env.OnAMac()){
@@ -50,19 +49,6 @@ public class ShipBehavior : MonoBehaviour {
 			shootTheLazer();
 			transform.SendMessage("NetworkShoot");
 		}
-
-		//shootOverride is used for network players
-		if(shootOverride){
-			shootTheLazer();
-		}
-	}
-	
-	void netShoot(){
-		shootOverride = true;
-	}
-	
-	void netStopShoot(){
-		shootOverride = false;
 	}
 	
 	void shootTheLazer(){
@@ -75,10 +61,6 @@ public class ShipBehavior : MonoBehaviour {
 			Rigidbody newLaser = Instantiate(bullet, cannon.position, transform.rotation) as Rigidbody;
 			newLaser.AddForce(transform.forward * velocity, ForceMode.VelocityChange);		
 		}
-	}
-
-	void netShieldUp(){
-		shieldsUp();
 	}
 	
 	void shieldsUp(){
@@ -141,6 +123,10 @@ public class ShipBehavior : MonoBehaviour {
 
 	void dead(){
 
+	}
+
+	void myNetViewID(int id){
+		phViewID = id;
 	}
 
 }

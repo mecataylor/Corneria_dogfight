@@ -19,8 +19,6 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			rigidbody.velocity = correctPlayerVel;
 			if(isShooting){
 				transform.SendMessage("netShoot");
-			}else{
-				transform.SendMessage("netStopShoot");
 			}
 			if(shieldUp){
 				gameObject.SendMessage("netShieldUp");
