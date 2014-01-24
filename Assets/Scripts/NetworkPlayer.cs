@@ -2,7 +2,8 @@
 using System.Collections;
 
 public class NetworkPlayer : Photon.MonoBehaviour {
-	
+
+	private int networkID;
 	private Vector3 correctPlayerPos;
 	private Quaternion correctPlayerRot;
 	private Vector3 correctPlayerVel;
@@ -11,6 +12,13 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 	private int died = -1;
 	private int sendHit = -1;
 	private int receivedHit = -1;
+
+	void Start(){
+		networkID = photonView.viewID;
+		if (!photonView.isMine){
+			gameObject.SendMessage("myNetViewID", networkID);
+		}
+	}
 	
 	void Update(){
 		if (!photonView.isMine){
@@ -18,19 +26,20 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			transform.rotation = Quaternion.Lerp (transform.rotation, correctPlayerRot, Time.deltaTime * 5);
 			rigidbody.velocity = correctPlayerVel;
 			if(isShooting){
-				transform.SendMessage("netShoot");
+				gameObject.SendMessage("netShoot");
 			}
 			if(shieldUp){
 				gameObject.SendMessage("netShieldUp");
 			}
 			if(died == photonView.viewID){
-				transform.SendMessage("netDied");
+				gameObject.SendMessage("netDied");
 			}
 		}else{
 			if(receivedHit == photonView.viewID){
-				transform.SendMessage("damage", Env.laserDamageAmount);
+				gameObject.SendMessage("damage", Env.laserDamageAmount);
 			}
 		}
+		resetReceivedVars();
 	}
 	
 	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info){
@@ -44,7 +53,7 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			stream.SendNext (sendHit);
 			stream.SendNext (died);
 			//now reset all the sent variables
-			resetVars();
+			resetSentVars();
 		}
 		else{
 			//Network Player, receive data
@@ -58,11 +67,15 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 		}
 	}
 
-	public void resetVars(){
+	public void resetSentVars(){
 		isShooting = false;
 		shieldUp = false;
 		sendHit = -1;
 		died = -1;
+	}
+
+	public void resetReceivedVars(){
+		receivedHit = -1;
 	}
 
 	public void NetworkShoot(){
@@ -80,6 +93,7 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 
 	//I hit someone
 	public void NetworkHit(int playerID){
+		Debug.Log ("I hit you, " + playerID);
 		sendHit = playerID;
 	}
 }
