@@ -109,8 +109,20 @@ public class ShipBehavior : MonoBehaviour {
 		transform.rotation = Quaternion.Slerp(transform.rotation, fwdRotation, Time.deltaTime * selfRightingSpeed );
 	}
 
-	void netDied(){
-		//death sequence
+
+	void OnCollisionEnter (Collision col)
+	{
+		int layer = Env.enemyFireLayer;
+		if(Env.isDogFight()){
+			layer = Env.playerFireLayer;
+		}
+		if(col.gameObject.layer == layer){
+			transform.SendMessage("damage", Env.laserDamageAmount);
+		}
+	}
+
+	void myNetViewID(int id){
+		phViewID = id;
 	}
 
 	void healed(){
@@ -122,11 +134,7 @@ public class ShipBehavior : MonoBehaviour {
 	}
 
 	void dead(){
-
-	}
-
-	void myNetViewID(int id){
-		phViewID = id;
+		Debug.Log ("I'm dead, Jim");
 	}
 
 }

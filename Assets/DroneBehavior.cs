@@ -36,20 +36,20 @@ public class DroneBehavior : MonoBehaviour {
 	void myNetViewID(int id){
 		phViewID = id;
 	}
+
+	void OnCollisionEnter (Collision col)
+	{
+		int layer = Env.enemyFireLayer;
+		if(Env.isDogFight()){
+			layer = Env.playerFireLayer;
+		}
+		if(col.gameObject.layer == layer){
+			transform.SendMessage("NetworkHit", phViewID);
+		}
+	}
 	
 	void netDied(){
 		//death sequence
-	}
-	
-	void healed(){
-		
-	}
-	
-	void damaged(){
-		
-	}
-	
-	void dead(){
-		
+		Debug.Log (phViewID + ": I died");
 	}
 }
