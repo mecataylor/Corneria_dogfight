@@ -26,6 +26,7 @@ public class RandomMatchmaker : MonoBehaviour {
 		int r = Random.Range(0, count);
 		GameObject plane = PhotonNetwork.Instantiate("Player", respawnLocations[r].transform.position, Quaternion.identity, 0);
 		initScripts(plane);
+		SetLayerRecursively(plane, Env.playerLayer);
 
 		//detect Rift
 		Transform riftCameraTransform = plane.transform.FindChild("OVRCameraController");
@@ -49,10 +50,15 @@ public class RandomMatchmaker : MonoBehaviour {
 		drone.enabled = false;
 		MonoBehaviour planeControls = (plane.GetComponent("ShipBehavior") as MonoBehaviour);
 		planeControls.enabled = true;
+		MonoBehaviour health = (plane.GetComponent("HealthBehavior") as MonoBehaviour);
+		health.enabled = true;
 		MonoBehaviour boundries = (plane.GetComponent("KeepInBounds") as MonoBehaviour);
 		boundries.enabled = true;
-		//set viewID
-		PhotonView phView = (plane.GetComponent("PhotonView") as PhotonView);
-		plane.SendMessage("myNetViewID", phView.viewID);
+	}
+
+	void SetLayerRecursively(GameObject go, int layerNumber){
+		foreach (Transform trans in go.GetComponentsInChildren<Transform>(true)){
+			trans.gameObject.layer = layerNumber;
+		}
 	}
 }

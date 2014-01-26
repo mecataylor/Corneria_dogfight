@@ -2,15 +2,23 @@
 using System.Collections;
 
 public class NetworkPlayer : Photon.MonoBehaviour {
-	
+
+	private int networkID;
 	private Vector3 correctPlayerPos;
 	private Quaternion correctPlayerRot;
 	private Vector3 correctPlayerVel;
 	private bool isShooting = false;
 	private bool shieldUp = false;
-	private bool died = false;
-	private bool gotAHit = false;
-	private int hitID = -1;
+	private int died = -1;
+	private int sendHit = -1;
+	private int receivedHit = -1;
+
+	void Start(){
+		networkID = photonView.viewID;
+		if (!photonView.isMine){
+			gameObject.SendMessage("myNetViewID", networkID);
+		}
+	}
 	
 	void Update(){
 		if (!photonView.isMine){
@@ -18,18 +26,20 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			transform.rotation = Quaternion.Lerp (transform.rotation, correctPlayerRot, Time.deltaTime * 5);
 			rigidbody.velocity = correctPlayerVel;
 			if(isShooting){
-				transform.SendMessage("netShoot");
+				gameObject.SendMessage("netShoot");
 			}
 			if(shieldUp){
 				gameObject.SendMessage("netShieldUp");
 			}
-			if(died){
-				transform.SendMessage("netDied");
+			if(died == photonView.viewID){
+				gameObject.SendMessage("netDied");
 			}
-			if(gotAHit && hitID == photonView.viewID){
-				transform.SendMessage("damage", 1);
+		}else{
+			if(receivedHit == photonView.viewID){
+				gameObject.SendMessage("damage", Env.laserDamageAmount);
 			}
 		}
+		resetReceivedVars();
 	}
 	
 	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info){
@@ -40,11 +50,10 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			stream.SendNext (rigidbody.velocity);
 			stream.SendNext (isShooting);
 			stream.SendNext (shieldUp);
-			stream.SendNext (gotAHit);
-			stream.SendNext (hitID);
+			stream.SendNext (sendHit);
 			stream.SendNext (died);
 			//now reset all the sent variables
-			resetVars();
+			resetSentVars();
 		}
 		else{
 			//Network Player, receive data
@@ -53,18 +62,20 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			correctPlayerVel = (Vector3) stream.ReceiveNext();
 			isShooting = (bool) stream.ReceiveNext();
 			shieldUp = (bool) stream.ReceiveNext();
-			gotAHit = (bool) stream.ReceiveNext();
-			hitID = (int) stream.ReceiveNext();
-			died = (bool) stream.ReceiveNext();
+			receivedHit = (int) stream.ReceiveNext();
+			died = (int) stream.ReceiveNext();
 		}
 	}
 
-	public void resetVars(){
+	public void resetSentVars(){
 		isShooting = false;
 		shieldUp = false;
-		gotAHit = false;
-		hitID = -1;
-		died = false;
+		sendHit = -1;
+		died = -1;
+	}
+
+	public void resetReceivedVars(){
+		receivedHit = -1;
 	}
 
 	public void NetworkShoot(){
@@ -75,12 +86,14 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 		shieldUp = true;
 	}
 
+	//I died
 	public void dead(){
-		died = true;
+		died = photonView.viewID;
 	}
 
+	//I hit someone
 	public void NetworkHit(int playerID){
-		hitID = playerID;
-		gotAHit = true;
+		Debug.Log ("I hit you, " + playerID);
+		sendHit = playerID;
 	}
 }

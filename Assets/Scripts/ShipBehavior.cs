@@ -34,7 +34,7 @@ public class ShipBehavior : MonoBehaviour {
 	
 	void Update () {
 		if(Input.GetButtonDown("Jump")){
-			transform.SendMessage("NetworkShield");
+			gameObject.SendMessage("NetworkShield");
 			shieldsUp();
 		}
 		boostOn();
@@ -47,7 +47,7 @@ public class ShipBehavior : MonoBehaviour {
 		if(Input.GetButtonDown("Fire1"))
 		{
 			shootTheLazer();
-			transform.SendMessage("NetworkShoot");
+			gameObject.SendMessage("NetworkShoot");
 		}
 	}
 	
@@ -109,8 +109,20 @@ public class ShipBehavior : MonoBehaviour {
 		transform.rotation = Quaternion.Slerp(transform.rotation, fwdRotation, Time.deltaTime * selfRightingSpeed );
 	}
 
-	void netDied(){
-		//death sequence
+
+	void OnCollisionEnter (Collision col)
+	{
+		int layer = Env.enemyFireLayer;
+		if(Env.isDogFight()){
+			layer = Env.droneFireLayer;
+		}
+		if(col.gameObject.layer == layer){
+			gameObject.SendMessage("damage", Env.laserDamageAmount);
+		}
+	}
+
+	void myNetViewID(int id){
+		phViewID = id;
 	}
 
 	void healed(){
@@ -122,11 +134,10 @@ public class ShipBehavior : MonoBehaviour {
 	}
 
 	void dead(){
-
-	}
-
-	void myNetViewID(int id){
-		phViewID = id;
+		Debug.Log ("I'm dead, Jim");
+		PhotonNetwork.Destroy(gameObject);
+		Destroy(gameObject);
+		//Application.Quit();
 	}
 
 }

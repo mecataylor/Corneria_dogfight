@@ -3,7 +3,7 @@ using System.Collections;
 
 public class DroneBehavior : MonoBehaviour {
 
-	private int phViewID;
+	public int networkID;
 	private GameObject shield;
 
 	public Rigidbody bullet;
@@ -25,6 +25,7 @@ public class DroneBehavior : MonoBehaviour {
 		float velocity = laser_velocity + throttle;
 		foreach(Transform cannon in cannons){
 			Rigidbody newLaser = Instantiate(bullet, cannon.position, transform.rotation) as Rigidbody;
+			SetLayerRecursively(newLaser.gameObject, Env.droneFireLayer);
 			newLaser.AddForce(transform.forward * velocity, ForceMode.VelocityChange);		
 		}
 	}
@@ -34,22 +35,30 @@ public class DroneBehavior : MonoBehaviour {
 	}
 	
 	void myNetViewID(int id){
-		phViewID = id;
+		networkID = id;
+	}
+
+	void OnCollisionEnter (Collision col)
+	{
+		if (this.enabled == false){
+			return;
+		}
+		Debug.Log(networkID + " Collision from layer " + col.gameObject.layer);
+		if(col.gameObject.layer == Env.playerFireLayer){
+			Debug.Log ("Drone hit (" + networkID + ")");
+			gameObject.SendMessage("NetworkHit", networkID);
+		}
 	}
 	
 	void netDied(){
 		//death sequence
+		Debug.Log (networkID + ": I died");
+		Destroy(gameObject);
 	}
-	
-	void healed(){
-		
-	}
-	
-	void damaged(){
-		
-	}
-	
-	void dead(){
-		
+
+	void SetLayerRecursively(GameObject go, int layerNumber){
+		foreach (Transform trans in go.GetComponentsInChildren<Transform>(true)){
+			trans.gameObject.layer = layerNumber;
+		}
 	}
 }
