@@ -45,6 +45,8 @@ public class DroneBehavior : MonoBehaviour {
 		}
 		Debug.Log(networkID + " Collision from layer " + col.gameObject.layer);
 		if(col.gameObject.layer == Env.playerFireLayer){
+			//destroy laser
+			Destroy (col.gameObject);
 			Debug.Log ("Drone hit (" + networkID + ")");
 			gameObject.SendMessage("NetworkHit", networkID);
 		}
