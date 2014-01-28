@@ -93,7 +93,6 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 
 	//I hit someone
 	public void NetworkHit(int playerID){
-		Debug.Log ("I hit you, " + playerID);
 		sendHit = playerID;
 	}
 }

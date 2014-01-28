@@ -112,6 +112,9 @@ public class ShipBehavior : MonoBehaviour {
 
 	void OnCollisionEnter (Collision col)
 	{
+		if (this.enabled == false){
+			return;
+		}
 		int layer = Env.enemyFireLayer;
 		if(Env.isDogFight()){
 			layer = Env.droneFireLayer;
