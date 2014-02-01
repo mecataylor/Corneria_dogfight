@@ -9,9 +9,6 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 	private Vector3 correctPlayerVel;
 	private bool isShooting = false;
 	private bool shieldUp = false;
-	private int died = -1;
-	private int sendHit = -1;
-	private int receivedHit = -1;
 
 	void Start(){
 		networkID = photonView.viewID;
@@ -31,13 +28,6 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			if(shieldUp){
 				gameObject.SendMessage("netShieldUp");
 			}
-			if(died == photonView.viewID){
-				gameObject.SendMessage("netDied");
-			}
-		}else{
-			if(receivedHit == photonView.viewID){
-				gameObject.SendMessage("damage", Env.laserDamageAmount);
-			}
 		}
 		resetReceivedVars();
 	}
@@ -50,10 +40,6 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			stream.SendNext (rigidbody.velocity);
 			stream.SendNext (isShooting);
 			stream.SendNext (shieldUp);
-			stream.SendNext (sendHit);
-			stream.SendNext (died);
-			//now reset all the sent variables
-			resetSentVars();
 		}
 		else{
 			//Network Player, receive data
@@ -62,20 +48,12 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			correctPlayerVel = (Vector3) stream.ReceiveNext();
 			isShooting = (bool) stream.ReceiveNext();
 			shieldUp = (bool) stream.ReceiveNext();
-			receivedHit = (int) stream.ReceiveNext();
-			died = (int) stream.ReceiveNext();
 		}
 	}
 
 	public void resetSentVars(){
 		isShooting = false;
 		shieldUp = false;
-		sendHit = -1;
-		died = -1;
-	}
-
-	public void resetReceivedVars(){
-		receivedHit = -1;
 	}
 
 	public void NetworkShoot(){
@@ -86,13 +64,16 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 		shieldUp = true;
 	}
 
-	//I died
-	public void dead(){
-		died = photonView.viewID;
+	//Local player hit someone
+	public void NetworkHit(int playerID){
+		photonView.RPC("iHitYou", PhotonTargets.All, playerID);
 	}
 
-	//I hit someone
-	public void NetworkHit(int playerID){
-		sendHit = playerID;
+	[RPC]
+	void iHitYou(int playerID){
+		if(networkID == playerID){
+			gameObject.SendMessage("damage", Env.laserDamageAmount);
+		}
 	}
+
 }

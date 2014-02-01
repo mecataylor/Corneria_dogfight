@@ -49,15 +49,23 @@ public class DroneBehavior : MonoBehaviour {
 			gameObject.SendMessage("NetworkHit", networkID);
 		}
 	}
-	
-	void netDied(){
-		//death sequence
-		Destroy(gameObject);
-	}
 
 	void SetLayerRecursively(GameObject go, int layerNumber){
 		foreach (Transform trans in go.GetComponentsInChildren<Transform>(true)){
 			trans.gameObject.layer = layerNumber;
 		}
+	}
+
+	void healed(){
+		
+	}
+	
+	void damaged(){
+		
+	}
+	
+	void dead(){
+		//death sequence
+		Destroy(gameObject);
 	}
 }

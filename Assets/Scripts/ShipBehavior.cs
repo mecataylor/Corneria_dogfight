@@ -110,19 +110,20 @@ public class ShipBehavior : MonoBehaviour {
 	}
 
 
-	void OnCollisionEnter (Collision col)
-	{
-		if (this.enabled == false){
-			return;
-		}
-		int layer = Env.enemyFireLayer;
-		if(Env.isDogFight()){
-			layer = Env.droneFireLayer;
-		}
-		if(col.gameObject.layer == layer){
-			gameObject.SendMessage("damage", Env.laserDamageAmount);
-		}
-	}
+//we don't need this I think, unless we have powerups
+//	void OnCollisionEnter (Collision col)
+//	{
+//		if (this.enabled == false){
+//			return;
+//		}
+//		int layer = Env.enemyFireLayer;
+//		if(Env.isDogFight()){
+//			layer = Env.droneFireLayer;
+//		}
+//		if(col.gameObject.layer == layer){
+//			gameObject.SendMessage("damage", Env.laserDamageAmount);
+//		}
+//	}
 
 	void myNetViewID(int id){
 		phViewID = id;

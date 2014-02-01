@@ -14,7 +14,7 @@ public enum CloudServerRegion { EU, US, Asia, Japan };
 [System.Serializable]
 public class ServerSettings : ScriptableObject
 {
-    public static string DefaultCloudServerUrl = "app-eu.exitgamescloud.com";
+    public static string DefaultCloudServerUrl = "app-us.exitgamescloud.com";
     
     // per region name and server-prefix
     // must match order in CloudServerRegion enum!
