@@ -21,7 +21,7 @@ public class DroneBehavior : MonoBehaviour {
 	
 	}
 
-	void netShoot(){
+	void Shoot(){
 		float velocity = laser_velocity + throttle;
 		foreach(Transform cannon in cannons){
 			Rigidbody newLaser = Instantiate(bullet, cannon.position, transform.rotation) as Rigidbody;
@@ -30,7 +30,7 @@ public class DroneBehavior : MonoBehaviour {
 		}
 	}
 	
-	void netShieldUp(){
+	void shieldUp(){
 		shield.SetActive(true);
 	}
 	
@@ -66,6 +66,5 @@ public class DroneBehavior : MonoBehaviour {
 	
 	void dead(){
 		//death sequence
-		Destroy(gameObject);
 	}
 }

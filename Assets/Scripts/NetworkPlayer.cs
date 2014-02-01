@@ -7,8 +7,6 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 	private Vector3 correctPlayerPos;
 	private Quaternion correctPlayerRot;
 	private Vector3 correctPlayerVel;
-	private bool isShooting = false;
-	private bool shieldUp = false;
 
 	void Start(){
 		networkID = photonView.viewID;
@@ -22,14 +20,7 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			transform.position = Vector3.Lerp (transform.position, correctPlayerPos, Time.deltaTime * 5);
 			transform.rotation = Quaternion.Lerp (transform.rotation, correctPlayerRot, Time.deltaTime * 5);
 			rigidbody.velocity = correctPlayerVel;
-			if(isShooting){
-				gameObject.SendMessage("netShoot");
-			}
-			if(shieldUp){
-				gameObject.SendMessage("netShieldUp");
-			}
 		}
-		resetReceivedVars();
 	}
 	
 	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info){
@@ -38,30 +29,21 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			stream.SendNext (transform.position);
 			stream.SendNext (transform.rotation);
 			stream.SendNext (rigidbody.velocity);
-			stream.SendNext (isShooting);
-			stream.SendNext (shieldUp);
 		}
 		else{
 			//Network Player, receive data
 			correctPlayerPos = (Vector3) stream.ReceiveNext();
 			correctPlayerRot = (Quaternion) stream.ReceiveNext();
 			correctPlayerVel = (Vector3) stream.ReceiveNext();
-			isShooting = (bool) stream.ReceiveNext();
-			shieldUp = (bool) stream.ReceiveNext();
 		}
 	}
 
-	public void resetSentVars(){
-		isShooting = false;
-		shieldUp = false;
-	}
-
 	public void NetworkShoot(){
-		isShooting = true;
+		photonView.RPC("Fire", PhotonTargets.All, networkID);
 	}
 
 	public void NetworkShield(){
-		shieldUp = true;
+		photonView.RPC("ShieldUp", PhotonTargets.All, networkID);
 	}
 
 	//Local player hit someone
@@ -73,6 +55,20 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 	void iHitYou(int playerID){
 		if(networkID == playerID){
 			gameObject.SendMessage("damage", Env.laserDamageAmount);
+		}
+	}
+
+	[RPC]
+	void ShieldUp(int playerID){
+		if(networkID == playerID){
+			gameObject.SendMessage("shieldUp");
+		}
+	}
+
+	[RPC]
+	void Fire(int playerID){
+		if(networkID == playerID){
+			gameObject.SendMessage("Shoot");
 		}
 	}
 

@@ -140,6 +140,7 @@ public class ShipBehavior : MonoBehaviour {
 	void dead(){
 		Debug.Log ("I'm dead, Jim");
 		PhotonNetwork.Destroy(gameObject);
+		//death sequence
 		Destroy(gameObject);
 		//Application.Quit();
 	}
