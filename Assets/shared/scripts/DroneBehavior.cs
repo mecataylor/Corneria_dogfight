@@ -7,6 +7,7 @@ public class DroneBehavior : MonoBehaviour {
 	private GameObject shield;
 
 	public Rigidbody bullet;
+	public Transform explosion;
 	public float laser_velocity = 125.0f;
 	public Transform[] cannons;
 	public int throttle = 60;
@@ -44,10 +45,15 @@ public class DroneBehavior : MonoBehaviour {
 			return;
 		}
 		if(col.gameObject.layer == Env.playerFireLayer){
-			//destroy laser
-			Destroy (col.gameObject);
-			gameObject.SendMessage("NetworkHit", networkID);
+			takeAhit(col.gameObject);
 		}
+	}
+
+	void takeAhit(GameObject bullet)
+	{
+		Destroy (bullet);
+		Instantiate(explosion, bullet.transform.position, bullet.transform.rotation);
+		gameObject.SendMessage("NetworkHit", networkID);
 	}
 
 	void SetLayerRecursively(GameObject go, int layerNumber){

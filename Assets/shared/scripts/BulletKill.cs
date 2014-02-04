@@ -9,4 +9,11 @@ public class BulletKill : MonoBehaviour {
     {
         Destroy(gameObject, lifetime);
     }
+
+	void OnCollisionEnter(Collision col)
+	{
+		if(col.gameObject.layer == Env.environmentLayer){
+			Destroy (gameObject);
+		}
+	}
 }

@@ -11,6 +11,7 @@ public class ShipBehavior : MonoBehaviour {
 	private string rollAxis = "RightJoystickX";
 
 	public Rigidbody bullet;
+	public Transform explosion;
 	public float laser_velocity = 125.0f;
 	public Transform[] cannons;
 		
@@ -110,20 +111,20 @@ public class ShipBehavior : MonoBehaviour {
 	}
 
 
-//we don't need this I think, unless we have powerups
-//	void OnCollisionEnter (Collision col)
-//	{
-//		if (this.enabled == false){
-//			return;
-//		}
-//		int layer = Env.enemyFireLayer;
-//		if(Env.isDogFight()){
-//			layer = Env.droneFireLayer;
-//		}
-//		if(col.gameObject.layer == layer){
-//			gameObject.SendMessage("damage", Env.laserDamageAmount);
-//		}
-//	}
+	void OnCollisionEnter (Collision col)
+	{
+		if (this.enabled == false){
+			return;
+		}
+		int layer = Env.enemyFireLayer;
+		if(Env.isDogFight()){
+			layer = Env.droneFireLayer;
+		}
+		if(col.gameObject.layer == layer){
+			Destroy (col.gameObject);
+			Instantiate(explosion, col.transform.position, col.transform.rotation);
+		}
+	}
 
 	void myNetViewID(int id){
 		phViewID = id;
