@@ -50,6 +50,8 @@ public class RandomMatchmaker : MonoBehaviour {
 		drone.enabled = false;
 		MonoBehaviour planeControls = (plane.GetComponent("ShipBehavior") as MonoBehaviour);
 		planeControls.enabled = true;
+		MonoBehaviour infopanels = (plane.GetComponent("InfoPanels") as MonoBehaviour);
+		infopanels.enabled = true;
 		MonoBehaviour boundries = (plane.GetComponent("KeepInBounds") as MonoBehaviour);
 		boundries.enabled = true;
 	}

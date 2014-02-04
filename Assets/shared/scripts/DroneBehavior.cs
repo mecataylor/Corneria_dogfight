@@ -23,6 +23,9 @@ public class DroneBehavior : MonoBehaviour {
 	}
 
 	void Shoot(){
+		if (this.enabled == false){
+			return;
+		}
 		float velocity = laser_velocity + throttle;
 		foreach(Transform cannon in cannons){
 			Rigidbody newLaser = Instantiate(bullet, cannon.position, transform.rotation) as Rigidbody;
@@ -32,6 +35,9 @@ public class DroneBehavior : MonoBehaviour {
 	}
 	
 	void shieldUp(){
+		if (this.enabled == false){
+			return;
+		}
 		shield.SetActive(true);
 	}
 	
@@ -71,6 +77,9 @@ public class DroneBehavior : MonoBehaviour {
 	}
 	
 	void dead(){
+		if (this.enabled == false){
+			return;
+		}
 		//death sequence
 	}
 }

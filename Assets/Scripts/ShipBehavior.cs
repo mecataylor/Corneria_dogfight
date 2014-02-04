@@ -60,7 +60,7 @@ public class ShipBehavior : MonoBehaviour {
 		float velocity = laser_velocity + velocityAdder;
 		foreach(Transform cannon in cannons){
 			Rigidbody newLaser = Instantiate(bullet, cannon.position, transform.rotation) as Rigidbody;
-			newLaser.AddForce(transform.forward * velocity, ForceMode.VelocityChange);		
+			newLaser.AddForce(transform.forward * velocity, ForceMode.VelocityChange);
 		}
 	}
 	
@@ -123,6 +123,7 @@ public class ShipBehavior : MonoBehaviour {
 		if(col.gameObject.layer == layer){
 			Destroy (col.gameObject);
 			Instantiate(explosion, col.transform.position, col.transform.rotation);
+			gameObject.SendMessage("hit");
 		}
 	}
 
@@ -139,6 +140,9 @@ public class ShipBehavior : MonoBehaviour {
 	}
 
 	void dead(){
+		if (this.enabled == false){
+			return;
+		}
 		Debug.Log ("I'm dead, Jim");
 		PhotonNetwork.Destroy(gameObject);
 		//death sequence
