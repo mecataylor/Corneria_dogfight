@@ -12,7 +12,6 @@ public class BulletKill : MonoBehaviour {
 
 	void OnCollisionEnter(Collision col)
 	{
-		Debug.Log ("Layer: " + gameObject.layer);
 		if(col.gameObject.layer == Env.environmentLayer){
 			Destroy (gameObject);
 		}
