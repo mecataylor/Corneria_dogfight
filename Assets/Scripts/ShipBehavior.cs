@@ -3,32 +3,35 @@ using System.Collections;
 
 public class ShipBehavior : MonoBehaviour {
 	
-	private GameObject shield;
-	private bool boosting;
-	private int phViewID;
-
-	private string boostAxis = "Triggers";
-	private string rollAxis = "RightJoystickX";
-
 	public Rigidbody bullet;
 	public Transform explosion;
 	public float laser_velocity = 125.0f;
 	public Transform[] cannons;
 		
-	public int throttle = 60;
-	public int boost = 10;
-	public float xSensitivity = 1.0f;
+	public int throttle = 100;
+	public int boost = 2;
+	public float boostDuration = 2.0f;
+	public float yawSensitivity = 1.0f;
 	public float rollSensitivity = 5.0f;
 	public float pitchSensitivity = 1.0f;
 	public float selfRightingSpeed = 1.0f;
-	public float rotateOnYaw = 1f;
+
+	private GameObject shield;
+	private bool boosting;
+	private int phViewID;
+	
+	private string shootAxis = "Triggers";
+	private string rollAxis = "RightJoystickX";
+	private float inputThreshold = -0.001f;
+	private float MacInputThreshold = 0.001f;
+	private int current_throttle = 0;
 
 	void Start () {
 		shield = transform.Find("shield").gameObject;
 
 		//check for OSX for controls
 		if(Env.OnAMac()){
-			boostAxis = "MACTriggers";
+			shootAxis = "MACTriggers";
 			rollAxis = "Triggers";
 		}
 	}
@@ -45,10 +48,15 @@ public class ShipBehavior : MonoBehaviour {
 	
 	//fire when ready
 	void fire(){
-		if(Input.GetButtonDown("Fire1"))
+		if(laserThreshold())
 		{
 			shootTheLazer();
 			gameObject.SendMessage("NetworkShoot");
+		}
+
+		if(missileThreshold())
+		{
+			//shoot missiles
 		}
 	}
 	
@@ -69,35 +77,78 @@ public class ShipBehavior : MonoBehaviour {
 	}
 
 	void boostOn(){
-		if(forwardInput() < -.001){
+		if(Input.GetButtonDown("Fire1")){
 			boosting = true;
-		}else{
-			boosting = false;
+			StartCoroutine(turnBoostOff());
 		}
 	}
 
-	float forwardInput(){
-		return Input.GetAxis(boostAxis);
+	IEnumerator turnBoostOff(){
+		yield return new WaitForSeconds(boostDuration);
+		boosting = false;
+	}
+
+	float triggerInput(){
+		return Input.GetAxis(shootAxis);
+	}
+
+	bool laserThreshold(){
+		if(Env.OnAMac()){
+			return triggerInput() > MacInputThreshold;
+		}else{
+			return triggerInput() < inputThreshold;
+		}
+	}
+
+	bool missileThreshold(){
+		if(Env.OnAMac()){
+			return triggerInput() > MacInputThreshold;
+		}else{
+			return triggerInput() < inputThreshold;
+		}
 	}
 	
 	void fly() {
 
+		setVelocity();
+
+		setDirection();
+	}
+
+	void setVelocity(){
+		//braking
+		if(Input.GetButton("Fire2")){
+			//slow down to stop
+			current_throttle -= 10;
+			if(current_throttle < 0){
+				current_throttle = 0;
+			}
+		}else{
+			//speed up to maximum
+			current_throttle += 10;
+			if(current_throttle > throttle){
+				current_throttle = throttle;
+			}
+		}
+		
+		if(boosting){
+			current_throttle *= boost;
+		}
+		
+		rigidbody.velocity = transform.forward * current_throttle;
+	}
+
+	void setDirection(){
 		float pitchInput = Input.GetAxis("LeftJoystickY");
 		float rollInput = Input.GetAxis(rollAxis);
 		float yawInput = Input.GetAxis("LeftJoystickX");
 		
-		if(boosting){
-			rigidbody.velocity = transform.forward * throttle * (boost * -forwardInput());
-		}else{
-			rigidbody.velocity = transform.forward * throttle;
-		}
-		
-		float yaw = Time.deltaTime * throttle * yawInput * xSensitivity;
+		float yaw = Time.deltaTime * throttle * yawInput * yawSensitivity;
 		float roll = Time.deltaTime * throttle * rollInput * rollSensitivity;
 		float pitch = Time.deltaTime * throttle * pitchInput * pitchSensitivity;
-
+		
 		transform.Rotate(-pitch, yaw, -roll);
-
+		
 		//if you're not rolling it will self-right
 		if(rollInput == 0){
 			selfRighting();
