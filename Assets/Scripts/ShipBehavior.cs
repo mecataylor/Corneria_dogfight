@@ -134,6 +134,10 @@ public class ShipBehavior : MonoBehaviour {
 		if(boosting){
 			current_throttle *= boost;
 		}
+
+		if(boosting && Input.GetButton("Fire2")){
+			current_throttle = throttle;
+		}
 		
 		rigidbody.velocity = transform.forward * current_throttle;
 	}
