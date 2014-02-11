@@ -20,6 +20,7 @@ public class shieldBehavior : MonoBehaviour {
 	}
 	
 	void OnEnable(){
+		audio.Play();
 		StartCoroutine(Disable(gameObject, duration));
 	}
 	

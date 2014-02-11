@@ -19,7 +19,6 @@ public class EnemySpawn : Photon.MonoBehaviour {
 		if(PhotonNetwork.isMasterClient){
 			//check how many enemies there are currently
 			enemy_count = GameObject.FindGameObjectsWithTag("Enemy").Length;
-			Debug.Log("max: " + (enemy_count < num_of_baddies));
 			if(enemy_count < num_of_baddies){
 				spawn();
 			}
