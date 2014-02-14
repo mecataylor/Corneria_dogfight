@@ -6,7 +6,8 @@ public class ShipBehavior : MonoBehaviour {
 	public Rigidbody bullet;
 	public Transform explosion;
 	public float laser_velocity = 125.0f;
-	public float fireRate = 0.5f;
+	public float fireRate = 0.75f;
+	public float burstFireLength = 0.05f;
 	public Transform[] cannons;
 		
 	public int throttle = 100;
@@ -19,6 +20,7 @@ public class ShipBehavior : MonoBehaviour {
 
 	private GameObject shield;
 	private bool boosting;
+	private bool firing;
 	private float nextFire;
 	private int phViewID;
 	
@@ -54,14 +56,24 @@ public class ShipBehavior : MonoBehaviour {
 		{
 			if(Time.time > nextFire){
 				nextFire = Time.time + fireRate;
-				shootTheLazer();
-				gameObject.SendMessage("NetworkShoot");
+				firing = true;
 			}
 		}else if(missileThreshold()){
 			//shoot missiles
 		}else{
 			nextFire = Time.time;
 		}
+
+		if(firing){
+			shootTheLazer();
+			gameObject.SendMessage("NetworkShoot");
+			StartCoroutine(stopFiring());
+		}
+	}
+
+	IEnumerator stopFiring(){
+		yield return new WaitForSeconds(burstFireLength);
+		firing = false;
 	}
 	
 	void shootTheLazer(){
