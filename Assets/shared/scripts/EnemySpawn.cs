@@ -45,10 +45,9 @@ public class EnemySpawn : Photon.MonoBehaviour {
 
 	Vector3 addRandomAmounts(Vector3 position){
 		float x, y, z;
-		int randX = Random.Range(0, randomDistanceFromSpawn);
-		int randY = Random.Range(0, randomDistanceFromSpawn);
-		int randZ = Random.Range(0, randomDistanceFromSpawn);
-		Debug.Log("" + randX + ", " + randY + ", " + randZ);
+		int randX = Random.Range(20, randomDistanceFromSpawn);
+		int randY = Random.Range(20, randomDistanceFromSpawn);
+		int randZ = Random.Range(20, randomDistanceFromSpawn);
 		return new Vector3(position.x + randX, position.y + randY, position.z + randZ);
 	}
 }
