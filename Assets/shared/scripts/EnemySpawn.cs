@@ -5,6 +5,7 @@ public class EnemySpawn : Photon.MonoBehaviour {
 
 	public Transform[] enemy_transforms;
 	public int num_of_baddies;
+	public int randomDistanceFromSpawn = 20;
 	
 	private GameObject[] respawnLocations;
 	private int respawn_locations_count;
@@ -28,7 +29,8 @@ public class EnemySpawn : Photon.MonoBehaviour {
 	void spawn(){
 		Transform enemy = randomEnemy();
 		GameObject location = randomLocation();
-		PhotonNetwork.InstantiateSceneObject(enemy.name, location.transform.position, Quaternion.identity, 0, new object[0]);
+		Vector3 newPosition = addRandomAmounts(location.transform.position);
+		PhotonNetwork.InstantiateSceneObject(enemy.name, newPosition, Quaternion.identity, 0, new object[0]);
 	}
 
 	Transform randomEnemy(){
@@ -39,5 +41,14 @@ public class EnemySpawn : Photon.MonoBehaviour {
 	GameObject randomLocation(){
 		int r = Random.Range(0, respawn_locations_count);
 		return respawnLocations[r];
+	}
+
+	Vector3 addRandomAmounts(Vector3 position){
+		float x, y, z;
+		int randX = Random.Range(0, randomDistanceFromSpawn);
+		int randY = Random.Range(0, randomDistanceFromSpawn);
+		int randZ = Random.Range(0, randomDistanceFromSpawn);
+		Debug.Log("" + randX + ", " + randY + ", " + randZ);
+		return new Vector3(position.x + randX, position.y + randY, position.z + randZ);
 	}
 }
