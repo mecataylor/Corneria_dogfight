@@ -3,6 +3,8 @@ using System.Collections;
 
 public class RandomMatchmaker : MonoBehaviour {
 
+	public bool rift = true;
+
 	// Use this for initialization
 	void Start () {
 		PhotonNetwork.ConnectUsingSettings("0.1");
@@ -28,19 +30,27 @@ public class RandomMatchmaker : MonoBehaviour {
 		initScripts(plane);
 		SetLayerRecursively(plane, Env.playerLayer);
 
-		//detect Rift
-		Transform riftCameraTransform = plane.transform.FindChild("OVRCameraController");
-		GameObject riftCamera = riftCameraTransform.gameObject;
-		riftCamera.SetActive(true);
+		if (rift) {
+			//detect Rift
+			Transform riftCameraTransform = plane.transform.FindChild ("OVRCameraController");
+			GameObject riftCamera = riftCameraTransform.gameObject;
+			riftCamera.SetActive (true);
 
-		//decide which camera
-		if(!OVRDevice.IsHMDPresent()){
-			//first deactivate Rift camera
-			riftCamera.SetActive(false);
+			//decide which camera
+			if (!OVRDevice.IsHMDPresent ()) {
+					//first deactivate Rift camera
+					riftCamera.SetActive (false);
+					//activate normal camera
+					Transform cameraTransform = plane.transform.FindChild ("Main Camera");
+					GameObject mainCamera = cameraTransform.gameObject;
+					mainCamera.SetActive (true);
+			}
+		}
+		else {
 			//activate normal camera
-			Transform cameraTransform = plane.transform.FindChild("Main Camera");
+			Transform cameraTransform = plane.transform.FindChild ("Main Camera");
 			GameObject mainCamera = cameraTransform.gameObject;
-			mainCamera.SetActive(true);
+			mainCamera.SetActive (true);
 		}
 
 	}
