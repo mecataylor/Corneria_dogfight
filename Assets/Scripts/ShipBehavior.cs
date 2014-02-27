@@ -3,10 +3,13 @@ using System.Collections;
 
 public class ShipBehavior : MonoBehaviour {
 	
-	public Rigidbody bullet;
+	public Rigidbody laser;
+	public Rigidbody missile;
+	public Transform reticule;
 	public Transform explosion;
 	public float laser_velocity = 125.0f;
 	public float fireRate = 0.75f;
+	public float missileReloadTime = 3f;
 	public float burstFireLength = 0.05f;
 	public Transform[] cannons;
 		
@@ -21,13 +24,13 @@ public class ShipBehavior : MonoBehaviour {
 	private GameObject shield;
 	private bool boosting;
 	private bool firing;
+	private bool missileReady = true;
 	private float nextFire;
 	private int phViewID;
 	
 	private string shootAxis = "Triggers";
 	private string rollAxis = "RightJoystickX";
-	private float inputThreshold = -0.001f;
-	private float MacInputThreshold = 0.001f;
+	private float inputThreshold = 0.001f;
 	private int current_throttle = 0;
 
 	void Start () {
@@ -58,10 +61,16 @@ public class ShipBehavior : MonoBehaviour {
 				nextFire = Time.time + fireRate;
 				firing = true;
 			}
-		}else if(missileThreshold()){
-			//shoot missiles
 		}else{
 			nextFire = Time.time;
+		}
+
+		if(missileThreshold()){
+			if(missileReady){
+				missileReady = false;
+				fireTheMissile();
+				StartCoroutine(LoadMissile());
+			}
 		}
 
 		if(firing){
@@ -75,6 +84,11 @@ public class ShipBehavior : MonoBehaviour {
 		yield return new WaitForSeconds(burstFireLength);
 		firing = false;
 	}
+
+	IEnumerator LoadMissile(){
+		yield return new WaitForSeconds(missileReloadTime);
+		missileReady = true;
+	}
 	
 	void shootTheLazer(){
 		float velocityAdder = throttle;
@@ -83,9 +97,17 @@ public class ShipBehavior : MonoBehaviour {
 		}
 		float velocity = laser_velocity + velocityAdder;
 		foreach(Transform cannon in cannons){
-			Rigidbody newLaser = Instantiate(bullet, cannon.position, transform.rotation) as Rigidbody;
+			Rigidbody newLaser = Instantiate(laser, cannon.position, transform.rotation) as Rigidbody;
 			newLaser.AddForce(transform.forward * velocity, ForceMode.VelocityChange);
 		}
+	}
+
+	void fireTheMissile(){
+		Rigidbody newMissile = Instantiate(missile, cannons[0].position, transform.rotation) as Rigidbody;
+		//This has weird results. We'll have to look at it more
+		//newMissile.transform.LookAt(reticule);
+		newMissile.gameObject.SendMessage("setVelocity", throttle);
+		newMissile.AddForce(transform.forward, ForceMode.Impulse);
 	}
 	
 	void shieldsUp(){
@@ -110,17 +132,17 @@ public class ShipBehavior : MonoBehaviour {
 
 	bool laserThreshold(){
 		if(Env.OnAMac()){
-			return triggerInput() > MacInputThreshold;
+			return triggerInput() > inputThreshold;
 		}else{
-			return triggerInput() < inputThreshold;
+			return triggerInput() < -inputThreshold;
 		}
 	}
 
 	bool missileThreshold(){
 		if(Env.OnAMac()){
-			return triggerInput() > MacInputThreshold;
+			return triggerInput() < -inputThreshold;
 		}else{
-			return triggerInput() < inputThreshold;
+			return triggerInput() > inputThreshold;
 		}
 	}
 	
