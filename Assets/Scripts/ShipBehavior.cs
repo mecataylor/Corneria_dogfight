@@ -69,6 +69,7 @@ public class ShipBehavior : MonoBehaviour {
 			if(missileReady){
 				missileReady = false;
 				fireTheMissile();
+				gameObject.SendMessage("NetworkMissileShoot");
 				StartCoroutine(LoadMissile());
 			}
 		}

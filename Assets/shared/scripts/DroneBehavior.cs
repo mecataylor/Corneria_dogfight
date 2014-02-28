@@ -7,6 +7,7 @@ public class DroneBehavior : MonoBehaviour {
 	private GameObject shield;
 
 	public Rigidbody bullet;
+	public Rigidbody missile;
 	public Transform explosion;
 	public float laser_velocity = 125.0f;
 	public Transform[] cannons;
@@ -32,6 +33,18 @@ public class DroneBehavior : MonoBehaviour {
 			SetLayerRecursively(newLaser.gameObject, Env.droneFireLayer);
 			newLaser.AddForce(transform.forward * velocity, ForceMode.VelocityChange);		
 		}
+	}
+
+	void MissileShoot(){
+		if (this.enabled == false){
+			return;
+		}
+		Rigidbody newMissile = Instantiate(missile, cannons[0].position, transform.rotation) as Rigidbody;
+		SetLayerRecursively(newMissile.gameObject, Env.droneFireLayer);
+		//This has weird results. We'll have to look at it more
+		//newMissile.transform.LookAt(reticule);
+		newMissile.gameObject.SendMessage("setVelocity", throttle);
+		newMissile.AddForce(transform.forward, ForceMode.Impulse);
 	}
 	
 	void shieldUp(){

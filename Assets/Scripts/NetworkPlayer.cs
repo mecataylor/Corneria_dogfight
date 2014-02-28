@@ -42,6 +42,10 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 		photonView.RPC("Fire", PhotonTargets.All, networkID);
 	}
 
+	public void NetworkMissileShoot(){
+		photonView.RPC("MissileFire", PhotonTargets.All, networkID);
+	}
+
 	public void NetworkShield(){
 		photonView.RPC("ShieldUp", PhotonTargets.All, networkID);
 	}
@@ -69,6 +73,13 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 	void Fire(int playerID){
 		if(networkID == playerID){
 			gameObject.SendMessage("Shoot");
+		}
+	}
+
+	[RPC]
+	void MissileFire(int playerID){
+		if(networkID == playerID){
+			gameObject.SendMessage("MissileShoot");
 		}
 	}
 
