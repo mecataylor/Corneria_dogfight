@@ -12,6 +12,7 @@ public class ShipBehavior : MonoBehaviour {
 	public float missileReloadTime = 3f;
 	public float burstFireLength = 0.05f;
 	public Transform[] cannons;
+	public GameObject ship;
 		
 	public int throttle = 100;
 	public int boost = 2;
@@ -218,7 +219,12 @@ public class ShipBehavior : MonoBehaviour {
 			Destroy (col.gameObject);
 			Instantiate(explosion, col.transform.position, col.transform.rotation);
 			gameObject.SendMessage("hit");
+			shakeTheShip();
 		}
+	}
+
+	void shakeTheShip(){
+		ship.animation.Play("ship_shake");
 	}
 
 	void myNetViewID(int id){
