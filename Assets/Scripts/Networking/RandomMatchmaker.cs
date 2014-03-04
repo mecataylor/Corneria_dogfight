@@ -30,6 +30,11 @@ public class RandomMatchmaker : MonoBehaviour {
 		initScripts(plane);
 		SetLayerRecursively(plane, Env.playerLayer);
 
+		//activate the radar for local player only
+		GameObject Radar_Map = plane.transform.FindChild ("Radar_Map").gameObject;
+		Radar_Map.SetActive (true);
+
+		// manage the cameras
 		if (rift) {
 			//detect Rift
 			Transform riftCameraTransform = plane.transform.FindChild ("OVRCameraController");

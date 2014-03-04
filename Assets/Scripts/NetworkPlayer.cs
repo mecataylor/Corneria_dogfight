@@ -82,5 +82,8 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 			gameObject.SendMessage("MissileShoot");
 		}
 	}
-
+	// still needs work
+//	void OnPlayerDisconnected(NetworkPlayer player){
+//		Debug.Log ("Someone left me!!!");
+//	}
 }
