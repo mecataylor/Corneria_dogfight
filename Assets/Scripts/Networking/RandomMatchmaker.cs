@@ -5,9 +5,12 @@ public class RandomMatchmaker : MonoBehaviour {
 
 	public bool rift = true;
 
+	private GameObject[] respawnLocations;
+
 	// Use this for initialization
 	void Start () {
 		PhotonNetwork.ConnectUsingSettings("0.1");
+		respawnLocations = GameObject.FindGameObjectsWithTag("Respawn");
 	}
 	
 	void OnGUI(){
@@ -23,7 +26,6 @@ public class RandomMatchmaker : MonoBehaviour {
 	}
 	
 	void OnJoinedRoom(){
-		GameObject[] respawnLocations = GameObject.FindGameObjectsWithTag("Respawn");
 		int count = respawnLocations.Length;
 		int r = Random.Range(0, count);
 		GameObject plane = PhotonNetwork.Instantiate("Player", respawnLocations[r].transform.position, Quaternion.identity, 0);
@@ -76,4 +78,5 @@ public class RandomMatchmaker : MonoBehaviour {
 			trans.gameObject.layer = layerNumber;
 		}
 	}
+	
 }

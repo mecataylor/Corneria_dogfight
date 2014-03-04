@@ -35,7 +35,11 @@ public class EnemySpawn : Photon.MonoBehaviour {
 
 	Transform randomEnemy(){
 		int r = Random.Range(0, enemy_count);
-		return enemy_transforms[r];
+		if(r < enemy_transforms.Length){
+			return enemy_transforms[r];
+		}else{
+			return randomEnemy();
+		}
 	}
 
 	GameObject randomLocation(){

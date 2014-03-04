@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyBehavior : MonoBehaviour {
+public class EnemyBehavior : Photon.MonoBehaviour {
 
 	public Rigidbody projectile;
 	public float shootFrequency;
@@ -89,7 +89,7 @@ public class EnemyBehavior : MonoBehaviour {
 	
 	//message from Health class
 	void dead(){
-		Destroy (gameObject);
+		PhotonNetwork.Destroy(gameObject);
 	}
 	
 	//message from Health class

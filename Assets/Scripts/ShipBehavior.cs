@@ -30,6 +30,7 @@ public class ShipBehavior : MonoBehaviour {
 	private int phViewID;
 	
 	private string shootAxis = "Triggers";
+	private string MacShootAxis2 = "RightJoystickY";
 	private string rollAxis = "RightJoystickX";
 	private float inputThreshold = 0.001f;
 	private int current_throttle = 0;
@@ -132,6 +133,10 @@ public class ShipBehavior : MonoBehaviour {
 		return Input.GetAxis(shootAxis);
 	}
 
+	float macTriggerInput(){
+		return Input.GetAxis(MacShootAxis2);
+	}
+
 	bool laserThreshold(){
 		if(Env.OnAMac()){
 			return triggerInput() > inputThreshold;
@@ -142,7 +147,7 @@ public class ShipBehavior : MonoBehaviour {
 
 	bool missileThreshold(){
 		if(Env.OnAMac()){
-			return triggerInput() < -inputThreshold;
+			return macTriggerInput() > inputThreshold;
 		}else{
 			return triggerInput() > inputThreshold;
 		}
@@ -211,14 +216,15 @@ public class ShipBehavior : MonoBehaviour {
 		if (this.enabled == false){
 			return;
 		}
-		int layer = Env.enemyFireLayer;
-		if(Env.isDogFight()){
-			layer = Env.droneFireLayer;
-		}
-		if(col.gameObject.layer == layer){
+//		int layer = Env.enemyFireLayer;
+//		if(Env.isDogFight()){
+//			layer = Env.droneFireLayer;
+//		}
+//		if(col.gameObject.layer == layer){
+		if(col.gameObject.layer == Env.enemyFireLayer || col.gameObject.layer == Env.droneFireLayer){
 			Destroy (col.gameObject);
 			Instantiate(explosion, col.transform.position, col.transform.rotation);
-			gameObject.SendMessage("hit");
+			gameObject.SendMessage("damage", Env.laserDamageAmount);
 			shakeTheShip();
 		}
 	}
