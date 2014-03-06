@@ -4,6 +4,7 @@ using System.Collections;
 public class EnemyBehavior : Photon.MonoBehaviour {
 
 	public Rigidbody projectile;
+	public GameObject DeathExplosion;
 	public float shootFrequency;
 	//The middle component of the enemy
 	public Transform middle;
@@ -89,6 +90,7 @@ public class EnemyBehavior : Photon.MonoBehaviour {
 	
 	//message from Health class
 	void dead(){
+		Instantiate(DeathExplosion, transform.position, transform.rotation);
 		PhotonNetwork.Destroy(gameObject);
 	}
 	
