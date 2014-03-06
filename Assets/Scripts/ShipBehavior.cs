@@ -7,6 +7,7 @@ public class ShipBehavior : MonoBehaviour {
 	public Rigidbody missile;
 	public Transform reticule;
 	public Transform explosion;
+	public GameObject DeathExplosion;
 	public float laser_velocity = 125.0f;
 	public float fireRate = 0.75f;
 	public float missileReloadTime = 3f;
@@ -26,6 +27,7 @@ public class ShipBehavior : MonoBehaviour {
 	private bool boosting;
 	private bool firing;
 	private bool missileReady = true;
+	private bool deathSequence = false;
 	private float nextFire;
 	private int phViewID;
 	
@@ -46,13 +48,17 @@ public class ShipBehavior : MonoBehaviour {
 	}
 	
 	void Update () {
-		if(Input.GetButtonDown("Jump")){
-			gameObject.SendMessage("NetworkShield");
-			shieldsUp();
+		if(deathSequence){
+			Instantiate(DeathExplosion, transform.position, transform.rotation);
+		}else{
+			if(Input.GetButtonDown("Jump")){
+				gameObject.SendMessage("NetworkShield");
+				shieldsUp();
+			}
+			boostOn();
+			fly();
+			fire();
 		}
-		boostOn();
-		fly();
-		fire();
 	}
 	
 	//fire when ready
@@ -108,7 +114,7 @@ public class ShipBehavior : MonoBehaviour {
 	void fireTheMissile(){
 		Rigidbody newMissile = Instantiate(missile, cannons[0].position, transform.rotation) as Rigidbody;
 		//This has weird results. We'll have to look at it more
-		//newMissile.transform.LookAt(reticule);
+		newMissile.transform.LookAt(reticule);
 		newMissile.gameObject.SendMessage("setVelocity", throttle);
 		newMissile.AddForce(transform.forward, ForceMode.Impulse);
 	}
@@ -195,8 +201,12 @@ public class ShipBehavior : MonoBehaviour {
 		float yaw = Time.deltaTime * throttle * yawInput * yawSensitivity;
 		float roll = Time.deltaTime * throttle * rollInput * rollSensitivity;
 		float pitch = Time.deltaTime * throttle * pitchInput * pitchSensitivity;
-		
-		transform.Rotate(-pitch, yaw, -roll);
+
+		if(Env.riftActive){
+			transform.Rotate(-pitch, yaw, -roll);
+		}else{
+			transform.Rotate(-pitch, yaw, 0);
+		}
 		
 		//if you're not rolling it will self-right
 		if(rollInput == 0){
@@ -249,10 +259,18 @@ public class ShipBehavior : MonoBehaviour {
 		if (this.enabled == false){
 			return;
 		}
-		PhotonNetwork.Destroy(gameObject);
 		//death sequence
-		Destroy(gameObject);
-		//Application.Quit();
+		deathSequence = true;
+		StartCoroutine(deathAndRebirth());
+	}
+
+	IEnumerator deathAndRebirth(){
+		yield return new WaitForSeconds(7f);
+		PhotonNetwork.Destroy(gameObject);
+		PhotonNetwork.LeaveRoom();
+		//restart
+		GameObject scripts = GameObject.Find("Scripts") as GameObject;
+		scripts.BroadcastMessage("login");
 	}
 
 }

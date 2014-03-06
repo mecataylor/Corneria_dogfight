@@ -4,14 +4,15 @@ using System.Collections;
 public class DroneBehavior : MonoBehaviour {
 
 	public int networkID;
-	private GameObject shield;
-
 	public Rigidbody bullet;
 	public Rigidbody missile;
 	public Transform explosion;
+	public GameObject DeathExplosion;
 	public float laser_velocity = 125.0f;
 	public Transform[] cannons;
 	public int throttle = 60;
+
+	private GameObject shield;
 
 	// Use this for initialization
 	void Start () {
@@ -94,5 +95,6 @@ public class DroneBehavior : MonoBehaviour {
 			return;
 		}
 		//death sequence
+		Instantiate(DeathExplosion, transform.position, transform.rotation);
 	}
 }

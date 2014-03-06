@@ -12,13 +12,17 @@ public class RandomMatchmaker : MonoBehaviour {
 		PhotonNetwork.ConnectUsingSettings("0.1");
 		respawnLocations = GameObject.FindGameObjectsWithTag("Respawn");
 	}
+
+	void login(){
+		PhotonNetwork.JoinRandomRoom();
+	}
 	
 	void OnGUI(){
 		GUILayout.Label(PhotonNetwork.connectionStateDetailed.ToString());
 	}
 	
 	void OnJoinedLobby(){
-		PhotonNetwork.JoinRandomRoom();
+		login();
 	}
 	
 	void OnPhotonRandomJoinFailed(){
@@ -51,6 +55,8 @@ public class RandomMatchmaker : MonoBehaviour {
 					Transform cameraTransform = plane.transform.FindChild ("Main Camera");
 					GameObject mainCamera = cameraTransform.gameObject;
 					mainCamera.SetActive (true);
+			}else{
+				gameObject.SendMessage("setRiftActive");
 			}
 		}
 		else {

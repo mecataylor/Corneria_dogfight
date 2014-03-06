@@ -32,15 +32,18 @@ public class EnemyBehavior : Photon.MonoBehaviour {
 	}
 	
 	void attack(GameObject toAttack){
-		attacking = true;
-		player = toAttack;
-		StartCoroutine(fire());
+		if(!attacking){
+			attacking = true;
+			player = toAttack;
+			StartCoroutine(fire());
+		}
 	}
 	
 	void Update(){
-		if (attacking && player){
+		if (attacking && player.activeInHierarchy){
 			Attacking(player);
 		}else{
+			attacking = false;
 			float current_y = transform.position.y;
 			if(menacingUp){
 				moveY(current_y + menaceSpeed);
@@ -91,7 +94,14 @@ public class EnemyBehavior : Photon.MonoBehaviour {
 	//message from Health class
 	void dead(){
 		Instantiate(DeathExplosion, transform.position, transform.rotation);
-		PhotonNetwork.Destroy(gameObject);
+		photonView.RPC("destroyBaddie", PhotonTargets.MasterClient, photonView.viewID);
+	}
+
+	[RPC]
+	void destroyBaddie(int viewID){
+		if(photonView.viewID == viewID){
+			PhotonNetwork.Destroy(gameObject);
+		}
 	}
 	
 	//message from Health class
