@@ -49,7 +49,7 @@ public class ShipBehavior : MonoBehaviour {
 	
 	void Update () {
 		if(deathSequence){
-			Instantiate(DeathExplosion, transform.position, transform.rotation);
+			Instantiate(DeathExplosion, ship.transform.position, ship.transform.rotation);
 		}else{
 			if(Input.GetButtonDown("Jump")){
 				gameObject.SendMessage("NetworkShield");
@@ -113,8 +113,9 @@ public class ShipBehavior : MonoBehaviour {
 
 	void fireTheMissile(){
 		Rigidbody newMissile = Instantiate(missile, cannons[0].position, transform.rotation) as Rigidbody;
-		//This has weird results. We'll have to look at it more
-		newMissile.transform.LookAt(reticule);
+		if(Env.riftActive){
+			newMissile.transform.LookAt(reticule);
+		}
 		newMissile.gameObject.SendMessage("setVelocity", throttle);
 		newMissile.AddForce(transform.forward, ForceMode.Impulse);
 	}

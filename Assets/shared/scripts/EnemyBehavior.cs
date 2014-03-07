@@ -34,23 +34,33 @@ public class EnemyBehavior : Photon.MonoBehaviour {
 	void attack(GameObject toAttack){
 		if(!attacking){
 			attacking = true;
-			player = toAttack;
+			player = toAttack.transform.parent.parent.gameObject;
+			int playerID = getViewID(player);
+			photonView.RPC ("targetAquired", PhotonTargets.All, new int[] {playerID, photonView.viewID});
 			StartCoroutine(fire());
 		}
 	}
+
+	int getViewID(GameObject target){
+		PhotonView playerView = player.GetComponent("PhotonView") as PhotonView;
+		return playerView.viewID;
+	}
 	
 	void Update(){
-		if (attacking && player.activeInHierarchy){
-			Attacking(player);
-		}else{
-			attacking = false;
-			float current_y = transform.position.y;
-			if(menacingUp){
-				moveY(current_y + menaceSpeed);
+		if(PhotonNetwork.isMasterClient){
+			if (attacking && player.activeInHierarchy){
+				Attacking(player);
 			}else{
-				moveY(current_y - menaceSpeed);
+				attacking = false;
+				photonView.RPC ("voidTarget", PhotonTargets.All, photonView.viewID);
+				float current_y = transform.position.y;
+				if(menacingUp){
+					moveY(current_y + menaceSpeed);
+				}else{
+					moveY(current_y - menaceSpeed);
+				}
+				MenacingDirection(current_y);
 			}
-			MenacingDirection(current_y);
 		}
 	}
 
@@ -65,11 +75,16 @@ public class EnemyBehavior : Photon.MonoBehaviour {
 
 	IEnumerator fire(){
 		while(attacking){
-			Rigidbody projectileInstance = Instantiate(projectile, middle.position, transform.rotation) as Rigidbody;
-			if(player){
-				projectileInstance.SendMessage("setTarget", player);
-			}
+			photonView.RPC ("baddieFire", PhotonTargets.All, photonView.viewID);
+			shootPlasma();
 			yield return new WaitForSeconds(shootFrequency);
+		}
+	}
+
+	void shootPlasma(){
+		Rigidbody projectileInstance = Instantiate(projectile, middle.position, transform.rotation) as Rigidbody;
+		if(player){
+			projectileInstance.SendMessage("setTarget", player);
 		}
 	}
 
@@ -101,6 +116,30 @@ public class EnemyBehavior : Photon.MonoBehaviour {
 	void destroyBaddie(int viewID){
 		if(photonView.viewID == viewID){
 			PhotonNetwork.Destroy(gameObject);
+		}
+	}
+
+	[RPC]
+	void targetAquired(int[] ids){
+		if(photonView.viewID == ids[1] ){
+			PhotonView target = PhotonView.Find (ids[0]);
+			player = target.transform.gameObject;
+			attacking = true;
+			StartCoroutine(fire());
+		}
+	}
+
+	[RPC]
+	void voidTarget(){
+		if(photonView.viewID == viewID){
+			attacking = false;
+		}
+	}
+
+	[RPC]
+	void baddieFire(int viewID){
+		if(photonView.viewID == viewID){
+			shootPlasma();
 		}
 	}
 	
