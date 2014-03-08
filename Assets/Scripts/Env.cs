@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Env : MonoBehaviour {
 
-	public static int laserDamageAmount = 1;
+	public static int laserDamageAmount = 3;
 	public static int environmentLayer = 14;
 	public static int enemyFireLayer = 12;
 	public static int playerFireLayer = 9;

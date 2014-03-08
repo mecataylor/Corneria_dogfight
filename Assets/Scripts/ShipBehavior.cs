@@ -89,6 +89,14 @@ public class ShipBehavior : MonoBehaviour {
 		}
 	}
 
+	public float isMissileReady(){
+		if(missileReady){
+			return 100;
+		}else{
+			return 0;
+		}
+	}
+
 	IEnumerator stopFiring(){
 		yield return new WaitForSeconds(burstFireLength);
 		firing = false;
@@ -266,7 +274,7 @@ public class ShipBehavior : MonoBehaviour {
 	}
 
 	IEnumerator deathAndRebirth(){
-		yield return new WaitForSeconds(7f);
+		yield return new WaitForSeconds(10f);
 		PhotonNetwork.Destroy(gameObject);
 		PhotonNetwork.LeaveRoom();
 		//restart

@@ -13,6 +13,9 @@ public class armor : MonoBehaviour
 	private int frameCounter = 0;	
 	private float a=1; //alpha control
 	public static float armor_=100;
+
+	private ShipBehavior SHBehavior;
+	public GameObject shipRef;
 	
 	void Awake()
 	{
@@ -23,7 +26,7 @@ public class armor : MonoBehaviour
 
 	void Start ()
 	{
-		print(this.renderer.material.color);
+		//print(this.renderer.material.color);
 		//Load all textures found on the Sequence folder, that is placed inside the resources folder
 		this.objects = Resources.LoadAll("Holographic/output/main/armor", typeof(Texture));
 
@@ -35,6 +38,8 @@ public class armor : MonoBehaviour
 		{
 			this.textures[i] = (Texture)this.objects[i];
 		}
+
+		SHBehavior = shipRef.GetComponent("ShipBehavior") as ShipBehavior;
 	}
 	
 	
@@ -43,7 +48,10 @@ public class armor : MonoBehaviour
 
 	void Update ()
 	{
-		armor_=sliders.armor;
+		//armor_=sliders.armor;
+
+		armor_ = SHBehavior.isMissileReady();
+		Debug.Log(armor_);
 		
 		if (a!=sliders.opacity){
 			a= sliders.opacity;

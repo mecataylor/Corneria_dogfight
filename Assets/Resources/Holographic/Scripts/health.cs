@@ -53,7 +53,7 @@ public class health : MonoBehaviour
 			this.renderer.material.color = new Color(this.renderer.material.color.r,this.renderer.material.color.b,this.renderer.material.color.g,.65f*a);
 		}
 		
-		health_= (int)HBScript.getHealth() * 10;
+		health_= HBScript.getHealth();
 		frameCounter=(int)Mathf.Round((100f-health_)/5.263f);
 		goMaterial.mainTexture = textures[frameCounter];
 		
