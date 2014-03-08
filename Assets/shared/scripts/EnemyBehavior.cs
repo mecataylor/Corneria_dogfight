@@ -130,7 +130,7 @@ public class EnemyBehavior : Photon.MonoBehaviour {
 	}
 
 	[RPC]
-	void voidTarget(){
+	void voidTarget(int viewID){
 		if(photonView.viewID == viewID){
 			attacking = false;
 		}

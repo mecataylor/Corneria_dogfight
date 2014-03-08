@@ -13,6 +13,11 @@ public class HealthBehavior : MonoBehaviour {
 		current = health;
 	}
 	
+	public float getHealth()
+	{
+		return current;
+	}
+	
 	//restore health by amount
 	void heal(float amount){
 		current += amount;
