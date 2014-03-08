@@ -1,7 +1,9 @@
-﻿#pragma strict
+﻿ #pragma strict
 
 private var playerToTrack : GameObject;
 private var blipMe : GameObject;
+
+public var redBlipObject : GameObject;
 //var blipLocationX : float;
 //var blipLocationZ : float;
 private var scale = 4062;
@@ -14,35 +16,29 @@ function Start () {
 	//InvokeRepeating("updateAll", 1.0, 1.0); // only update the map once a second
 }
 
-//function updateAll(){
-//	// find and add/remove players to array
-//	findNewPlayers();
-//	removeFromPlayerArray();
-//	
-//	// determine yourself
-//	
-//	
-//	// call updatePosition for each element in array
-//	
-//	
-//}
+function removeRedBlips(){
+	for(var redBlip : GameObject in GameObject.FindGameObjectsWithTag("temp"))
+	{
+	    Destroy(redBlip);
+	}
+}
 
-//function addToPlayerArray(GameObject remotePlayer){
-//	playerArray.push(remotePlayer);
-//}
-
-//function removeFromPlayerArray(GameObject remotePlayer){
-//	var index = playerArray.indexOf(remotePlayer);
-//	if(index > -1){
-//		playerArray.splice(index, 1);
-//	}
-//}
-
-//function findNewPlayers() {
-//
-//}
+function updatePlayersBlips() {
+	for(var players : GameObject in GameObject.FindGameObjectsWithTag("NetPlayer"))
+	{
+	    // update each red blip location
+		var redBlip : GameObject = Instantiate(redBlipObject);
+		redBlip.transform.localPosition.x = players.transform.position.x / scale;
+		redBlip.transform.localPosition.z = players.transform.position.z / scale;
+		redBlip.transform.localPosition.y = 0.03;
+		redBlip.transform.localRotation.y = players.transform.rotation.y;
+		redBlip.tag = "temp";
+	}
+}
 
 function updatePosition(){
+	removeRedBlips();
+	updatePlayersBlips();
 	blipMe.transform.localPosition.x = playerToTrack.transform.position.x / scale;
 	blipMe.transform.localPosition.z = playerToTrack.transform.position.z / scale;
 	blipMe.transform.localPosition.y = 0.03;
