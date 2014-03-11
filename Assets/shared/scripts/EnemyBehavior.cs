@@ -48,7 +48,8 @@ public class EnemyBehavior : Photon.MonoBehaviour {
 	
 	void Update(){
 		if(PhotonNetwork.isMasterClient){
-			if (attacking && player.activeInHierarchy){
+//			if (attacking && player.activeInHierarchy){
+			if (attacking && player != null){
 				Attacking(player);
 			}else{
 				attacking = false;

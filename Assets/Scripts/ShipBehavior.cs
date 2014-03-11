@@ -39,7 +39,7 @@ public class ShipBehavior : MonoBehaviour {
 
 	void Start () {
 		shield = transform.Find("shield").gameObject;
-
+		InvokeRepeating("deathSequenceAnim", 5, 0.3F);
 		//check for OSX for controls
 		if(Env.OnAMac()){
 			shootAxis = "MACTriggers";
@@ -48,9 +48,7 @@ public class ShipBehavior : MonoBehaviour {
 	}
 	
 	void Update () {
-		if(deathSequence){
-			Instantiate(DeathExplosion, ship.transform.position, ship.transform.rotation);
-		}else{
+		if(!deathSequence){
 			if(Input.GetButtonDown("Jump")){
 				gameObject.SendMessage("NetworkShield");
 				shieldsUp();
@@ -60,7 +58,13 @@ public class ShipBehavior : MonoBehaviour {
 			fire();
 		}
 	}
-	
+
+	void deathSequenceAnim(){
+		if (deathSequence){
+			Instantiate(DeathExplosion, ship.transform.position, ship.transform.rotation);
+		}
+	}
+
 	//fire when ready
 	void fire(){
 		if(laserThreshold())
