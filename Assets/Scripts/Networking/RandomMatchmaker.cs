@@ -39,6 +39,9 @@ public class RandomMatchmaker : MonoBehaviour {
 		//activate the radar for local player only
 		GameObject Radar_Map = plane.transform.FindChild ("Radar_Map").gameObject;
 		Radar_Map.SetActive (true);
+		//activate the radar for local player only
+		GameObject HUD = plane.transform.FindChild ("HUD").gameObject;
+		HUD.SetActive (true);
 
 		// manage the cameras
 		if (rift) {
@@ -77,6 +80,7 @@ public class RandomMatchmaker : MonoBehaviour {
 		infopanels.enabled = true;
 		MonoBehaviour boundries = (plane.GetComponent("KeepInBounds") as MonoBehaviour);
 		boundries.enabled = true;
+		plane.tag = "Untagged";
 	}
 
 	void SetLayerRecursively(GameObject go, int layerNumber){

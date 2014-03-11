@@ -16,28 +16,60 @@ function Start () {
 	//InvokeRepeating("updateAll", 1.0, 1.0); // only update the map once a second
 }
 
-function removeRedBlips(){
-	for(var redBlip : GameObject in GameObject.FindGameObjectsWithTag("temp"))
-	{
-	    Destroy(redBlip);
+function syncRedBlips(){
+	var netPlayers = GameObject.FindGameObjectsWithTag("NetPlayer");
+	var netC = netPlayers.length;
+	var redBlips = GameObject.FindGameObjectsWithTag("temp");
+	var difference = netC - redBlips.length;
+	Debug.Log("Difference: " + difference);
+	if (difference > 0){
+		// add blips
+		for(var i=0;i<difference;i++){
+			var redBlip : GameObject = Instantiate(redBlipObject);
+			redBlip.transform.parent = this.transform;
+			redBlip.transform.localRotation.y = 0.0;
+			redBlip.transform.localRotation.x = 0.0;
+			redBlip.transform.localRotation.z = 0.0;
+			redBlip.tag = "temp";
+		}
 	}
+	else if (difference < 0){
+		//remove blips
+		var j = 0;
+		for(var redBlip2 : GameObject in GameObject.FindGameObjectsWithTag("temp"))
+		{
+		    if ( j > difference ){
+		    	Destroy(redBlip2);
+		    	j--;
+		    }
+		}
+	}
+//	for(var redBlip : GameObject in GameObject.FindGameObjectsWithTag("temp"))
+//	{
+//	    Destroy(redBlip);
+//	}
 }
 
 function updatePlayersBlips() {
-	for(var players : GameObject in GameObject.FindGameObjectsWithTag("NetPlayer"))
+	var redBlips = GameObject.FindGameObjectsWithTag("temp");
+	var players = GameObject.FindGameObjectsWithTag("NetPlayer");
+	var k = 0;
+	for(var player : GameObject in players)
 	{
 	    // update each red blip location
-		var redBlip : GameObject = Instantiate(redBlipObject);
-		redBlip.transform.localPosition.x = players.transform.position.x / scale;
-		redBlip.transform.localPosition.z = players.transform.position.z / scale;
+		var redBlip : GameObject = redBlips[k];
+//		redBlip.transform.parent = this.transform;
+		redBlip.transform.localPosition.x = player.transform.position.x / scale;
+		redBlip.transform.localPosition.z = player.transform.position.z / scale;
 		redBlip.transform.localPosition.y = 0.03;
-		redBlip.transform.localRotation.y = players.transform.rotation.y;
-		redBlip.tag = "temp";
+		redBlip.transform.localRotation.y = player.transform.rotation.y;
+//		redBlip.tag = "temp";
+		k++;
 	}
 }
 
 function updatePosition(){
-	removeRedBlips();
+	syncRedBlips();
 	updatePlayersBlips();
 	blipMe.transform.localPosition.x = playerToTrack.transform.position.x / scale;
 	blipMe.transform.localPosition.z = playerToTrack.transform.position.z / scale;
