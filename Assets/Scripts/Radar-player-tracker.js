@@ -21,7 +21,7 @@ function syncRedBlips(){
 	var netC = netPlayers.length;
 	var redBlips = GameObject.FindGameObjectsWithTag("temp");
 	var difference = netC - redBlips.length;
-	Debug.Log("Difference: " + difference);
+//	Debug.Log("Difference: " + difference);
 	if (difference > 0){
 		// add blips
 		for(var i=0;i<difference;i++){
