@@ -31,5 +31,8 @@ public class PlasmaBehavior : MonoBehaviour {
 			Destroy(col.gameObject);
 			Destroy(gameObject);
 		}
+		if(col.gameObject.layer == Env.environmentLayer){
+			Destroy (gameObject);
+		}
 	}
 }

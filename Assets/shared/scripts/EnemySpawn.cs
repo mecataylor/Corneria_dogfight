@@ -30,7 +30,7 @@ public class EnemySpawn : Photon.MonoBehaviour {
 		Transform enemy = randomEnemy();
 		GameObject location = randomLocation();
 		Vector3 newPosition = addRandomAmounts(location.transform.position);
-		PhotonNetwork.InstantiateSceneObject(enemy.name, newPosition, Quaternion.identity, 0, new object[0]);
+		PhotonNetwork.InstantiateSceneObject(enemy.name, newPosition, enemy.rotation, 0, new object[0]);
 	}
 
 	Transform randomEnemy(){
