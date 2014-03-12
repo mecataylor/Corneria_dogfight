@@ -66,7 +66,7 @@ public class EnemyBehavior : Photon.MonoBehaviour {
 	}
 
 	void Attacking(GameObject player){
-		transform.LookAt(player.transform);
+		transform.LookAt(player.transform, Vector3.up);
 		//Lerp to a position just infront of the player
 		Vector3 newposition = player.transform.position;
 		newposition.z = player.transform.position.z + 100;

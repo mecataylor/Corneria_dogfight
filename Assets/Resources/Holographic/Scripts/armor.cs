@@ -51,7 +51,6 @@ public class armor : MonoBehaviour
 		//armor_=sliders.armor;
 
 		armor_ = SHBehavior.isMissileReady();
-//		Debug.Log(armor_);
 		
 		if (a!=sliders.opacity){
 			a= sliders.opacity;
