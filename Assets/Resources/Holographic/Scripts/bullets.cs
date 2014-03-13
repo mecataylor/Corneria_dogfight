@@ -9,11 +9,15 @@ public class bullets : MonoBehaviour {
 	private float b_slider=2f;
 	private string name="";
 	private float a=1; //alpha control
+
+	private ShipBehavior SHBehavior;
+	public GameObject shipRef;
 	
 	// Use this for initialization
 	
 	void OnGUI () {
-		}
+		SHBehavior = shipRef.GetComponent("ShipBehavior") as ShipBehavior;
+	}
 	
 	void Start() {
 		createBullets ();
@@ -23,13 +27,13 @@ public class bullets : MonoBehaviour {
 	void createBullets () {
 		//print (this.transform.rotation);
 		for (int i=0;i<bullets_max;i++){
-	 bullet = (GameObject)Instantiate(Resources.Load("Holographic/output/main/bullets/bullet_prefab"),this.transform.position,Quaternion.identity);
-		bullet.transform.eulerAngles = GameObject.Find("bullets").transform.rotation.eulerAngles;
+	 		bullet = (GameObject)Instantiate(Resources.Load("Holographic/output/main/bullets/bullet_prefab"),this.transform.position,Quaternion.identity);
+			bullet.transform.eulerAngles = GameObject.Find("bullets").transform.rotation.eulerAngles;
 			bullet.name="bullet"+i.ToString();
 			bullet.renderer.material.color = new Color(this.renderer.material.color.r,this.renderer.material.color.b,this.renderer.material.color.g,0);
 		
-		bullet.transform.parent = this.transform;
-			}
+			bullet.transform.parent = this.transform;
+		}
 	}
 	
 	// Update is called once per frame
@@ -37,13 +41,15 @@ public class bullets : MonoBehaviour {
 		
 		if (a!=sliders.opacity){
 			a= sliders.opacity;
-this.renderer.material.color = new Color(this.renderer.material.color.r,this.renderer.material.color.b,this.renderer.material.color.g,.65f*a);
+			this.renderer.material.color = new Color(this.renderer.material.color.r,this.renderer.material.color.b,this.renderer.material.color.g,.65f*a);
 			drawBullets();
 		}
 		b_slider=sliders.bullets;
-	if (bullets_n!= b_slider*12f){
+
+		if (bullets_n!= b_slider*12f){
 		
-			bullets_n=b_slider*12f;
+			//bullets_n=b_slider*12f;
+			bullets_n = SHBehavior.currentVelocity();
 			
 			drawBullets();
 			
@@ -54,9 +60,10 @@ this.renderer.material.color = new Color(this.renderer.material.color.r,this.ren
 	void drawBullets(){
 		
 		for (int i=0;i<bullets_n;i++){
-		this.transform.Find("bullet"+i).transform.eulerAngles = GameObject.Find("bullets").transform.rotation.eulerAngles;
+			GameObject bulletsGameObject = GameObject.Find("bullets");
+			this.transform.Find("bullet"+i).transform.eulerAngles = bulletsGameObject.transform.rotation.eulerAngles;
 		
-		this.transform.Find("bullet"+i).transform.localScale = new Vector3(16f/bullets_n,this.transform.Find("bullet"+i).transform.localScale.y,this.transform.Find("bullet"+i).transform.localScale.z);
+			this.transform.Find("bullet"+i).transform.localScale = new Vector3(16f/bullets_n,this.transform.Find("bullet"+i).transform.localScale.y,this.transform.Find("bullet"+i).transform.localScale.z);
 				//1f*.081f,1f*0.081f);
 		
 			
@@ -70,8 +77,9 @@ this.renderer.material.color = new Color(this.renderer.material.color.r,this.ren
 	
 	
 	void weaponChange(){
-		name ="Holographic/output/main/bg/gun"+Mathf.Round(b_slider);
-		GameObject.Find("weapon").renderer.material.mainTexture= Resources.Load(name) as Texture;	
+		name ="Holographic/output/main/bg/gun3"; //+Mathf.Round(b_slider);
+		GameObject weaponGameObject = GameObject.Find("weapon");
+		weaponGameObject.renderer.material.mainTexture= Resources.Load(name) as Texture;	
 		
 	}
 }

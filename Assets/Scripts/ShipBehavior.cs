@@ -63,7 +63,6 @@ public class ShipBehavior : MonoBehaviour {
 			fly();
 			fire();
 		}
-		Debug.DrawRay(ship.transform.position, Vector3.forward);
 	}
 
 	void deathSequenceAnim(){
@@ -106,6 +105,10 @@ public class ShipBehavior : MonoBehaviour {
 		}else{
 			return 0;
 		}
+	}
+
+	public float currentVelocity(){
+		return current_throttle / 3;
 	}
 
 	IEnumerator stopFiring(){
@@ -202,6 +205,7 @@ public class ShipBehavior : MonoBehaviour {
 			}
 		}
 		
+		//boosting
 		if(boosting){
 			current_throttle *= boost;
 		}
