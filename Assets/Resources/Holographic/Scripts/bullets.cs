@@ -21,7 +21,7 @@ public class bullets : MonoBehaviour {
 		weaponChange();
 	}
 	void createBullets () {
-		print (this.transform.rotation);
+		//print (this.transform.rotation);
 		for (int i=0;i<bullets_max;i++){
 	 bullet = (GameObject)Instantiate(Resources.Load("Holographic/output/main/bullets/bullet_prefab"),this.transform.position,Quaternion.identity);
 		bullet.transform.eulerAngles = GameObject.Find("bullets").transform.rotation.eulerAngles;

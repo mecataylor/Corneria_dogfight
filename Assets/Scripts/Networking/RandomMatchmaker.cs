@@ -32,7 +32,7 @@ public class RandomMatchmaker : MonoBehaviour {
 	void OnJoinedRoom(){
 		int count = respawnLocations.Length;
 		int r = Random.Range(0, count);
-		GameObject plane = PhotonNetwork.Instantiate("Player", respawnLocations[r].transform.position, Quaternion.identity, 0);
+		GameObject plane = PhotonNetwork.Instantiate("Player", respawnLocations[r].transform.position, respawnLocations[r].transform.rotation, 0);
 		initScripts(plane);
 		SetLayerRecursively(plane, Env.playerLayer);
 

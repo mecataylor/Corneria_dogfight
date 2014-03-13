@@ -36,6 +36,7 @@ public class ShipBehavior : MonoBehaviour {
 	private string rollAxis = "RightJoystickX";
 	private float inputThreshold = 0.001f;
 	private int current_throttle = 0;
+	private Component camera;
 
 	void Start () {
 		shield = transform.Find("shield").gameObject;
@@ -44,6 +45,11 @@ public class ShipBehavior : MonoBehaviour {
 		if(Env.OnAMac()){
 			shootAxis = "MACTriggers";
 			rollAxis = "Triggers";
+		}
+
+		camera = GetComponent("Main Camera");
+		if(Env.riftActive){
+			camera = GetComponent("OVRCameraController");
 		}
 	}
 	
@@ -57,6 +63,7 @@ public class ShipBehavior : MonoBehaviour {
 			fly();
 			fire();
 		}
+		Debug.DrawRay(ship.transform.position, Vector3.forward);
 	}
 
 	void deathSequenceAnim(){
