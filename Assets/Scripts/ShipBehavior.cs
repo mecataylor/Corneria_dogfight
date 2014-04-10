@@ -31,8 +31,8 @@ public class ShipBehavior : MonoBehaviour {
 	private float nextFire;
 	private int phViewID;
 	
-	private string shootAxis = "Triggers";
-	private string MacShootAxis2 = "RightJoystickY";
+	private string accelAxis = "Triggers";
+	private string MacAccelAxis2 = "RightJoystickY";
 	private string rollAxis = "RightJoystickX";
 	private float inputThreshold = 0.001f;
 	private int current_throttle = 0;
@@ -43,7 +43,7 @@ public class ShipBehavior : MonoBehaviour {
 		InvokeRepeating("deathSequenceAnim", 5, 0.3F);
 		//check for OSX for controls
 		if(Env.OnAMac()){
-			shootAxis = "MACTriggers";
+			accelAxis = "MACTriggers";
 			rollAxis = "Triggers";
 		}
 
@@ -73,7 +73,7 @@ public class ShipBehavior : MonoBehaviour {
 
 	//fire when ready
 	void fire(){
-		if(laserThreshold())
+		if(Input.GetButton("Fire1"))
 		{
 			if(Time.time > nextFire){
 				nextFire = Time.time + fireRate;
@@ -83,7 +83,7 @@ public class ShipBehavior : MonoBehaviour {
 			nextFire = Time.time;
 		}
 
-		if(missileThreshold()){
+		if(Input.GetButton("Fire2")){
 			if(missileReady){
 				missileReady = false;
 				fireTheMissile();
@@ -147,7 +147,7 @@ public class ShipBehavior : MonoBehaviour {
 	}
 
 	void boostOn(){
-		if(Input.GetButtonDown("Fire1")){
+		if(boostThreshold() && boosting == false){
 			boosting = true;
 			StartCoroutine(turnBoostOff());
 		}
@@ -159,14 +159,14 @@ public class ShipBehavior : MonoBehaviour {
 	}
 
 	float triggerInput(){
-		return Input.GetAxis(shootAxis);
+		return Input.GetAxis(accelAxis);
 	}
 
 	float macTriggerInput(){
-		return Input.GetAxis(MacShootAxis2);
+		return Input.GetAxis(MacAccelAxis2);
 	}
 
-	bool laserThreshold(){
+	bool boostThreshold(){
 		if(Env.OnAMac()){
 			return triggerInput() > inputThreshold;
 		}else{
@@ -174,7 +174,7 @@ public class ShipBehavior : MonoBehaviour {
 		}
 	}
 
-	bool missileThreshold(){
+	bool brakeThreshold(){
 		if(Env.OnAMac()){
 			return macTriggerInput() > inputThreshold;
 		}else{
@@ -191,7 +191,7 @@ public class ShipBehavior : MonoBehaviour {
 
 	void setVelocity(){
 		//braking
-		if(Input.GetButton("Fire2")){
+		if(brakeThreshold()){
 			//slow down to stop
 			current_throttle -= 10;
 			if(current_throttle < 0){
@@ -210,7 +210,7 @@ public class ShipBehavior : MonoBehaviour {
 			current_throttle *= boost;
 		}
 
-		if(boosting && Input.GetButton("Fire2")){
+		if(boosting && brakeThreshold()){
 			current_throttle = throttle;
 		}
 		
