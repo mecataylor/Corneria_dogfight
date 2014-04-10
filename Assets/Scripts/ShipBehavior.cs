@@ -261,6 +261,12 @@ public class ShipBehavior : MonoBehaviour {
 			gameObject.SendMessage("damage", Env.laserDamageAmount);
 			shakeTheShip();
 		}
+
+		if(col.gameObject.layer == Env.environmentLayer){
+			Instantiate(explosion, col.transform.position, col.transform.rotation);
+			gameObject.SendMessage("damage", Env.environmentDamageAmount);
+			shakeTheShip();
+		}
 	}
 
 	void shakeTheShip(){
